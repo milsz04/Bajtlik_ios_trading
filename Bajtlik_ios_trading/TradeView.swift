@@ -26,7 +26,7 @@ struct TradeView: View {
                 }
                 .pickerStyle(.segmented)
                 .scaleEffect(2)
-                .frame(height: 60)
+                .frame(height: 40)
                 .padding(.horizontal,100)
                 
                 Picker("Order Type", selection: $orderType) {
