@@ -20,12 +20,27 @@ struct WatchlistView: View {
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 20) {
-                Text("Watchlist")
-                    .font(.system(size: 36, weight: .bold, design: .monospaced))
-                    .foregroundColor(.black)
-                    .padding(.horizontal)
-                    .padding(.top, 10)
-                
+                HStack{
+                    Text("Watchlist")
+                        .font(.system(size: 36, weight: .bold, design: .monospaced))
+                        .foregroundColor(.black)
+                        .padding(.horizontal, 10)
+                        .padding(.top, 10)
+                    Spacer()
+                    Button(action: {
+                        print("Add new stock")
+                    }) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 32, weight: .bold))
+                            .frame(width: 50, height: 50)
+                            .background(Circle().fill(Color.white))
+                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 3)
+                            .foregroundColor(.black)
+                            .padding(.horizontal)
+                    }
+                    .padding()
+
+                }
                 ScrollView {
                     VStack(spacing: 16) {
                         ForEach(items) { item in
@@ -34,18 +49,7 @@ struct WatchlistView: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom, .zero)
-                    Button(action: {
-                        print("Add new stock")
-                    }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: 28, weight: .bold))
-                            .frame(width: 60, height: 60)
-                            .background(Circle().fill(Color.white))
-                            .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 3)
-                            .foregroundColor(.black)
-                            .padding(16)
-                    }
-                    .padding(.bottom)
+                    
                 }
                 
                 Spacer()
