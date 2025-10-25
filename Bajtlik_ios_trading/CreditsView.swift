@@ -10,14 +10,6 @@ struct CreditsView: View {
             
             VStack(alignment: .leading, spacing: 16) {
                 HStack {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 40, weight: .bold))
-                        .foregroundColor(.primary)
-                }
-                    
                 Text("Credits")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
