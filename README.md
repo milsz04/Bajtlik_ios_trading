@@ -1,1 +1,0 @@
-# Bajtlik Ios Trading

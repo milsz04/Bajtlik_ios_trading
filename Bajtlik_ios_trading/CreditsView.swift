@@ -1,0 +1,80 @@
+import SwiftUI
+
+struct CreditsView: View {
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        ZStack {
+            Color(.systemGray6)
+                .ignoresSafeArea()
+            
+            VStack(alignment: .leading, spacing: 16) {
+                HStack {
+                Button(action: {
+                    dismiss()
+                }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundColor(.primary)
+                }
+                    
+                Text("Credits")
+                    .font(.system(size: 40, weight: .bold, design: .monospaced))
+                    .foregroundColor(.black)
+                    .padding(.leading, 10)
+                    
+                    Spacer()
+                }
+                .padding(.top, 20)
+                
+                Divider()
+                
+                Group {
+                    HStack {
+                        Text("Design & Concept\nTeam Bajtlik")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                        Spacer()
+                    }
+                    Divider()
+                    HStack {
+                        Text("Development\nMilosz Szynka\nKatarzyna Michalska\nJakub Piskorowski")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    }
+                    Divider()
+                    HStack {
+                        Text("Icons\nApple design resources")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    }
+                    Divider()
+                    HStack {
+                        Text("Fonts\nOverpass mono")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    }
+                    Divider()
+                    HStack {
+                        Text("Data providers\nApple design resources")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    }
+                    Divider()
+                    HStack {
+                        Text("App Name Origin\nBajtlik means wallet in Silesian Dialect")
+                            .font(.system(size: 18, weight: .medium, design: .monospaced))
+                    }
+                }
+                
+                Spacer()
+                
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Version 1.0.0 @ 2025 Bajtlik")
+                        .font(.system(size: 12, weight: .ultraLight))
+                }
+            }
+            .padding()
+        }
+        .navigationBarHidden(false)
+    }
+}
+
+#Preview {
+    CreditsView()
+}
