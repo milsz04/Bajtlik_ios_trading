@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct TradeView: View {
+    @EnvironmentObject var stockManager: StockManager
+    
     @State private var tradeType = "Sell"
     @State private var orderType = "Market"
     @State private var shares = 1
-    
+    @State private var stockPrice: Double = 150.25
     var estimatedCost: Double {
-        Double(shares) * 150.25
+        Double(shares) * stockPrice
     }
     
     var body: some View {
@@ -41,6 +43,13 @@ struct TradeView: View {
                 Divider()
                     .padding(.vertical, 10)
                 
+                HStack {
+                    Text("Price per share")
+                        .font(.system(size: 20, weight: .medium, design: .monospaced))
+                    Spacer()
+                    Text(String(format: "$%.2f", stockPrice))
+                        .font(.system(size: 20, weight: .medium, design: .monospaced))
+                }
                 
                 HStack {
                     Text("Shares")
@@ -53,7 +62,6 @@ struct TradeView: View {
                     .frame(width: 140)
                 }
                 
-                
                 HStack {
                     Text("Estimated cost")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
@@ -61,7 +69,6 @@ struct TradeView: View {
                     Text(String(format: "$%.2f", estimatedCost))
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                 }
-                
                 
                 HStack {
                     Text("Available")
@@ -74,7 +81,7 @@ struct TradeView: View {
                 Spacer()
                 
                 Button(action: {
-                    print("\(tradeType) \(shares) shares with \(orderType) order")
+                    print("\(tradeType) \(shares) shares with \(orderType) order at \(stockPrice)$ each")
                 }) {
                     Text("Place order")
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
@@ -89,9 +96,16 @@ struct TradeView: View {
             .padding()
         }
         .navigationBarHidden(false)
+        .onAppear {
+            if let stock = stockManager.selectedStock {
+                let cleanedPrice = stock.price.replacingOccurrences(of: ",", with: ".")
+                stockPrice = Double(cleanedPrice) ?? 150.25
+            }
+        }
     }
 }
 
 #Preview {
     TradeView()
+        .environmentObject(StockManager())
 }

@@ -28,4 +28,5 @@ struct AboutView: View {
 
 #Preview {
     AboutView()
+        .environmentObject(StockManager())
 }

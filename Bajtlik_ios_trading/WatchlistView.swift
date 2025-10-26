@@ -1,18 +1,7 @@
 import SwiftUI
 
 struct WatchlistView: View {
-    let items = [
-        StockItem(name: "ALLEGR", market: "GPW", price: "33,41", change: 0.67),
-        StockItem(name: "ALLERO", market: "NSDAQ", price: "33,41", change: 0.67),
-        StockItem(name: "ALLEGRO", market: "NSDAQ", price: "67,67", change: -0.67),
-        StockItem(name: "ALLEGR", market: "GPW", price: "33,41", change: 0.67),
-        StockItem(name: "ALLERO", market: "NSDAQ", price: "33,41", change: 0.67),
-        StockItem(name: "ALLEGRO", market: "NSDAQ", price: "67,67", change: -0.67),
-        StockItem(name: "ALLEGR", market: "GPW", price: "33,41", change: 0.67),
-        StockItem(name: "ALLERO", market: "NSDAQ", price: "33,41", change: 0.67),
-        StockItem(name: "ALLEGRO", market: "NSDAQ", price: "67,67", change: -0.67),
-        StockItem(name: "ALLEGR", market: "GPW", price: "33,41", change: 0.67)
-    ]
+    @EnvironmentObject var stockManager: StockManager
     
     var body: some View {
         ZStack {
@@ -20,7 +9,7 @@ struct WatchlistView: View {
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 20) {
-                HStack{
+                HStack {
                     Text("Watchlist")
                         .font(.system(size: 36, weight: .bold, design: .monospaced))
                         .foregroundColor(.black)
@@ -39,34 +28,28 @@ struct WatchlistView: View {
                             .padding(.horizontal)
                     }
                     .padding()
-
                 }
+                
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(items) { item in
-                            StockCard(item: item)
+                        ForEach(stockManager.stocks) { item in
+                            NavigationLink(
+                                destination: DetailedStockView()
+                                    .environmentObject(stockManager)
+                                    .onAppear { stockManager.selectedStock = item }
+                            ) {
+                                StockCard(item: item)
+                            }
                         }
                     }
                     .padding(.horizontal)
                     .padding(.bottom, .zero)
-                    
                 }
                 
                 Spacer()
-                
-                
             }
         }
-    
     }
-}
-
-struct StockItem: Identifiable {
-    let id = UUID()
-    let name: String
-    let market: String
-    let price: String
-    let change: Double
 }
 
 struct StockCard: View {
@@ -100,12 +83,12 @@ struct StockCard: View {
                 .fill(Color(.systemGray4))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
         )
-        .onTapGesture {
-            print(item.name)
-        }
     }
 }
 
 #Preview {
-    WatchlistView()
+    NavigationStack {
+        WatchlistView()
+            .environmentObject(StockManager())
+    }
 }

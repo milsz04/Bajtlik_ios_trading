@@ -1,15 +1,11 @@
 import SwiftUI
 
 struct BajtlikView: View {
+    @EnvironmentObject var stockManager: StockManager
+    
     @State private var bajtlikVal = 12400.02
     @State private var balance = 1100.09
     @State private var shares = 1
-    
-    let items2 = [
-        StockItem1(name: "ALLEGR", market: "GPW", price: "33,41", change: 0.67, difference: 120.12),
-        StockItem1(name: "ALLERO", market: "NSDAQ", price: "33,41", change: 0.67, difference: -15.04),
-        StockItem1(name: "ALLEGRO", market: "NSDAQ", price: "67,67", change: -0.67,difference: 0.0)
-    ]
     
     var body: some View {
         ZStack {
@@ -21,6 +17,7 @@ struct BajtlikView: View {
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
                     .padding(.top, 20)
+                
                 Text("Bajtlik Value")
                     .font(.system(size: 40, design: .monospaced))
                     .foregroundColor(.black)
@@ -38,21 +35,24 @@ struct BajtlikView: View {
                 Text("\(balance, specifier: "$%.2f")")
                     .font(.system(size: 30, design: .monospaced))
                     .foregroundColor(.black)
+                
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(items2) { item in
-                            StockCard1(item: item)
+                        ForEach(stockManager.stocks) { item in
+                            NavigationLink(
+                                destination: DetailedStockView()
+                                    .environmentObject(stockManager)
+                                    .onAppear {
+                                        stockManager.selectedStock = item
+                                    }
+                            ) {
+                                StockCardBajtlik(item: item)
+                            }
                         }
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, .zero)
                     .padding(.bottom)
                 }
-                
-            
-            
-                
-                
             }
             .padding()
         }
@@ -60,16 +60,8 @@ struct BajtlikView: View {
     }
 }
 
-struct StockItem1: Identifiable {
-    let id = UUID()
-    let name: String
-    let market: String
-    let price: String
-    let change: Double
-    let difference: Double
-}
-struct StockCard1: View {
-    let item: StockItem1
+struct StockCardBajtlik: View {
+    let item: StockItem
     
     var body: some View {
         HStack {
@@ -84,13 +76,6 @@ struct StockCard1: View {
             
             Spacer()
             
-            VStack(alignment: .trailing, spacing: 6){
-                Text("\(item.difference > 0 ? "+" : "")\(String(item.difference))$")
-                    .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(item.difference > 0 ? .green : .red)
-                    
-            }
-            
             VStack(alignment: .trailing, spacing: 6) {
                 Text(item.price)
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
@@ -99,7 +84,6 @@ struct StockCard1: View {
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
                     .foregroundColor(item.change > 0 ? .green : .red)
             }
-            
         }
         .padding()
         .background(
@@ -107,13 +91,12 @@ struct StockCard1: View {
                 .fill(Color(.systemGray4))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
         )
-        .onTapGesture {
-            print(item.name)
-        }
     }
 }
 
 #Preview {
-    BajtlikView()
+    NavigationStack {
+        BajtlikView()
+            .environmentObject(StockManager())
+    }
 }
-
