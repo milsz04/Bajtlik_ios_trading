@@ -1,27 +1,36 @@
 import SwiftUI
 
 struct ContentView: View {
-    var onStart: () -> Void = {}
+    @EnvironmentObject var stockManager: StockManager
+
     var body: some View {
         TabView {
-            
-            WatchlistView()
-                .tabItem {
-                    Label("", systemImage: "bookmark")
-                }
-            BajtlikView()
-                .tabItem {
-                    Label("", systemImage: "wallet.bifold")
-                }
-            TradeView()
-                .tabItem {
-                    Label("", systemImage: "repeat")
-                }
-            SettingView()
+            NavigationStack{
+                WatchlistView()
+            }
+                    .tabItem {
+                        Label("", systemImage: "bookmark")
+                    }
+            NavigationStack {
+                BajtlikView()
+            }
+                    .tabItem {
+                        Label("", systemImage: "wallet.bifold")
+                    }
+            NavigationStack{
+                TradeView()
+            }
+                    .tabItem {
+                        Label("", systemImage: "repeat")
+                    }
+            NavigationStack {
+                SettingView()
+            }
                 .tabItem {
                     Label("", systemImage: "gearshape")
                     
                 }
+                
         }
     }
 }
