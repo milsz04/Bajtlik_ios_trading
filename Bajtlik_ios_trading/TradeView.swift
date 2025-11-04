@@ -55,12 +55,15 @@ struct TradeView: View {
                     Text("Shares")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                     Spacer()
-                    Stepper(value: $shares, in: 1...100) {
-                        Text("\(shares)")
-                            .font(.system(size: 20, weight: .medium, design: .monospaced))
-                    }
-                    .frame(width: 140)
+                    TextField("", value: $shares, formatter: NumberFormatter())
+                        .keyboardType(.numberPad)
+                        .multilineTextAlignment(.trailing)
+                        .font(.system(size: 20, weight: .medium, design: .monospaced))
+                        .frame(width: 100)
+                        .textFieldStyle(.roundedBorder)
+                    
                 }
+
                 
                 HStack {
                     Text("Estimated cost")
@@ -87,8 +90,6 @@ struct TradeView: View {
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
-                        .background(Color.white)
-                        .clipShape(Capsule())
                         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
                         .foregroundColor(.black)
                 }

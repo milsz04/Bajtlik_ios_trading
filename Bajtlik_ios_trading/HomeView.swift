@@ -34,15 +34,15 @@ struct HomeView: View {
                     }
                     .opacity(opacity)
                     .onAppear {
-                        withAnimation(.easeInOut(duration: 1.0)) {
+                        withAnimation(.easeInOut(duration: 0.1)) {
                             opacity = 1.0
                         }
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                            withAnimation(.easeInOut(duration: 1.0)) {
+                            withAnimation(.easeInOut(duration: 0.5)) {
                                 opacity = 0.0
                             }
                             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                                withAnimation(.easeInOut(duration: 0.6)) {
+                                withAnimation(.easeInOut(duration: 0.4)) {
                                     showContentView = true
                                 }
                             }

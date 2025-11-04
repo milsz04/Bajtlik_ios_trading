@@ -8,21 +8,21 @@ struct ContentView: View {
             NavigationStack{
                 WatchlistView()
             }
-                    .tabItem {
-                        Label("", systemImage: "bookmark")
-                    }
+                .tabItem {
+                    Label("", systemImage: "bookmark")
+                }
             NavigationStack {
                 BajtlikView()
             }
-                    .tabItem {
-                        Label("", systemImage: "wallet.bifold")
-                    }
+                .tabItem {
+                    Label("", systemImage: "wallet.bifold")
+                }
             NavigationStack{
                 TradeView()
             }
-                    .tabItem {
-                        Label("", systemImage: "repeat")
-                    }
+                .tabItem {
+                    Label("", systemImage: "repeat")
+                }
             NavigationStack {
                 SettingView()
             }
@@ -32,6 +32,8 @@ struct ContentView: View {
                 }
                 
         }
+        .tabViewStyle(.automatic)
+        
     }
 }
 
