@@ -57,8 +57,12 @@ struct CreditsView: View {
                 Spacer()
                 
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Version 1.0.0 @ 2025 Bajtlik")
-                        .font(.system(size: 12, weight: .ultraLight))
+                    HStack{
+                        Spacer()
+                        Text("Version 1.0.0 @ 2025 Bajtlik")
+                            .font(.system(size: 12, weight: .ultraLight))
+                        Spacer()
+                    }
                 }
             }
             .padding()

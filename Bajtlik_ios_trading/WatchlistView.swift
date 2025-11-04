@@ -21,12 +21,10 @@ struct WatchlistView: View {
                     }) {
                         Image(systemName: "plus")
                             .font(.system(size: 32, weight: .bold))
-                            .frame(width: 50, height: 50)
-                            .background(Circle().fill(Color.white))
-                            .shadow(color: Color.black.opacity(0.2), radius: 3, x: 0, y: 3)
                             .foregroundColor(.black)
                             .padding(.horizontal)
                     }
+                    .buttonStyle(.glass)
                     .padding()
                 }
                 

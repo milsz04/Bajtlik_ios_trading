@@ -37,8 +37,8 @@ struct DetailedStockView: View {
                     Text("Price: \(stock.price)")
                         .font(.system(size: 20, design: .monospaced))
                     
-                    Text("Change: \(stock.change > 0 ? "+" : "")\(stock.change)%")
-                        .font(.system(size: 20, design: .monospaced))
+                    Text("Change: \(stock.change > 0 ? "+" : "")\(String(stock.change))%")
+                        .font(.system(size: 20, weight: .regular, design: .monospaced))
                         .foregroundColor(stock.change > 0 ? .green : .red)
                     
                     Spacer()

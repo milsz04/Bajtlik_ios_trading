@@ -1,41 +1,55 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var showContentView = false
+    @State private var opacity = 1.0
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(.systemGray6)
-                    .ignoresSafeArea()
+        ZStack {
+            if showContentView {
+                ContentView()
+                    .transition(.opacity)
+            } else {
+                ZStack {
                 
-                VStack(spacing: 40) {
-                    Image(systemName: "wallet.bifold")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 200, height: 200)
-                        .foregroundColor(.black.opacity(0.85))
-                        .padding(.top, 60)
+                    Color(.systemGray6)
+                        .ignoresSafeArea()
                     
-                    Text("BAJTLIK")
-                        .font(.system(size: 48, weight: .bold, design: .monospaced))
-                        .foregroundColor(.black.opacity(0.75))
-                    
-                    NavigationLink(destination: ContentView()) {
-                        Text("Start")
+                    VStack(spacing: 20) {
+                        Spacer()
+                        Image(systemName: "wallet.bifold")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 200, height: 200)
+                            .foregroundColor(.black.opacity(0.85))
+                        Spacer()
+                        Text("Bajtlik")
+                            .font(.system(size: 42, weight: .bold, design: .monospaced))
+                            .foregroundColor(.black)
+                        
+                        Text("Welcome!")
                             .font(.system(size: 24, weight: .regular, design: .monospaced))
-                            .padding(.horizontal, 50)
-                            .padding(.vertical, 15)
-                            .background(
-                                Capsule()
-                                    .fill(Color.white)
-                                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 4)
-                            )
-                            .foregroundColor(.black.opacity(0.8))
+                            .foregroundColor(.gray)
+                        Spacer()
                     }
-                    .padding(.top, 20)
-                    
-                    Spacer()
+                    .opacity(opacity)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            opacity = 1.0
+                        }
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            withAnimation(.easeInOut(duration: 1.0)) {
+                                opacity = 0.0
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                                withAnimation(.easeInOut(duration: 0.6)) {
+                                    showContentView = true
+                                }
+                            }
+                        }
+                    }
                 }
-                .padding()
+                .transition(.opacity)
             }
         }
     }
