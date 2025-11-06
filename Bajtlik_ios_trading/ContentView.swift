@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var stockManager: StockManager
+    @State private var showSearch = false
+    @State private var searchText = ""
 
     var body: some View {
         TabView {
@@ -32,8 +34,6 @@ struct ContentView: View {
                 }
                 
         }
-        .tabViewStyle(.automatic)
-        
     }
 }
 

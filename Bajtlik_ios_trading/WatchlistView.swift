@@ -44,7 +44,6 @@ struct WatchlistView: View {
                     .padding(.bottom, .zero)
                 }
                 
-                Spacer()
             }
         }
     }

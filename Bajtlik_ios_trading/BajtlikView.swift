@@ -54,7 +54,7 @@ struct BajtlikView: View {
                     .padding(.bottom)
                 }
             }
-            .padding()
+            .padding(.horizontal)
         }
         .navigationBarHidden(false)
     }
