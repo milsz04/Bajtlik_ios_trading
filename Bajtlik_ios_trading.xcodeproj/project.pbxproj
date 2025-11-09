@@ -195,6 +195,9 @@
 			);
 			mainGroup = CEA513C82EACEEF900452C37;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE101A7C2EBF75FA00569D16 /* XCRemoteSwiftPackageReference "swift-alpha-vantage" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CEA513D22EACEEF900452C37 /* Products */;
 			projectDirPath = "";
@@ -570,6 +573,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE101A7C2EBF75FA00569D16 /* XCRemoteSwiftPackageReference "swift-alpha-vantage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iamWing/swift-alpha-vantage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = CEA513C92EACEEF900452C37 /* Project object */;
 }

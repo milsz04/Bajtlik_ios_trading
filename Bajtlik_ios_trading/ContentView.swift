@@ -4,35 +4,22 @@ struct ContentView: View {
     @EnvironmentObject var stockManager: StockManager
     @State private var showSearch = false
     @State private var searchText = ""
+    @SceneStorage("selectedTab") private var selectedTabIndex = 0
 
     var body: some View {
-        TabView {
-            NavigationStack{
+        TabView(selection: $selectedTabIndex) {
+            Tab("", systemImage: "bookmark", value: 0){
                 WatchlistView()
             }
-                .tabItem {
-                    Label("", systemImage: "bookmark")
-                }
-            NavigationStack {
+            Tab("", systemImage: "wallet.bifold", value: 1){
                 BajtlikView()
             }
-                .tabItem {
-                    Label("", systemImage: "wallet.bifold")
-                }
-            NavigationStack{
+            Tab("", systemImage: "repeat", value: 2){
                 TradeView()
             }
-                .tabItem {
-                    Label("", systemImage: "repeat")
-                }
-            NavigationStack {
+            Tab("", systemImage: "gearshape", value: 3){
                 SettingView()
             }
-                .tabItem {
-                    Label("", systemImage: "gearshape")
-                    
-                }
-                
         }
     }
 }
