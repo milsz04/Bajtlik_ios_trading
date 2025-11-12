@@ -8,18 +8,41 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $selectedTabIndex) {
-            Tab("", systemImage: "bookmark", value: 0){
+            NavigationStack {
                 WatchlistView()
+                    .environmentObject(stockManager)
             }
-            Tab("", systemImage: "wallet.bifold", value: 1){
+            .tabItem {
+                Label("", systemImage: "bookmark")
+            }
+            .tag(0)
+            
+            NavigationStack {
                 BajtlikView()
+                    .environmentObject(stockManager)
             }
-            Tab("", systemImage: "repeat", value: 2){
+            .tabItem {
+                Label("", systemImage: "wallet.bifold")
+            }
+            .tag(1)
+            
+            NavigationStack {
                 TradeView()
+                    .environmentObject(stockManager)
             }
-            Tab("", systemImage: "gearshape", value: 3){
+            .tabItem {
+                Label("", systemImage: "repeat")
+            }
+            .tag(2)
+            
+            NavigationStack {
                 SettingView()
+                    .environmentObject(stockManager)
             }
+            .tabItem {
+                Label("", systemImage: "gearshape")
+            }
+            .tag(3)
         }
     }
 }

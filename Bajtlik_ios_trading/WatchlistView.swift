@@ -16,7 +16,7 @@ struct WatchlistView: View {
                     Text("Watchlist")
                         .font(.system(size: 36, weight: .bold, design: .monospaced))
                         .foregroundColor(.black)
-                        .padding(.horizontal, 10)
+                        .padding(.horizontal, 20)
                         .padding(.top, 10)
                     Spacer()
                     Button(action: {
@@ -24,31 +24,14 @@ struct WatchlistView: View {
                     }) {
                         Label("", systemImage: "plus.circle.fill")
                             .font(.system(size: 40, weight: .semibold))
+                            .foregroundColor(Color(.black))
+                            .padding(.horizontal, 10)
                     }
                     .alert("Add Stock Symbol", isPresented: $showSearchField) {
                         TextField("Enter symbol (e.g. AAPL)", text: $stockSymbol)
                         Button("Add") {
                             Task {
-                                do {
-                                    let quote = try await SwiftStockAPI.shared.fetchQuote(for: stockSymbol.uppercased())
-                                    print("Fetched \(stockSymbol.uppercased()) Quote:")
-                                    print("Current: \(quote.current)")
-                                    print("Change: \(quote.change)")
-                                    print("Percent Change: \(quote.percentChange)%")
-                                    
-                                    
-                                    let newStock = StockItem(
-                                        name: stockSymbol.uppercased(),
-                                        code: "TEST",
-                                        market: "NASDAQ",
-                                        price: String(format: "%.2f", quote.current),
-                                        change: quote.percentChange
-                                    )
-                                    stockManager.stocks.append(newStock)
-                                    stockSymbol = ""
-                                } catch {
-                                    print("Error fetching stock quote:", error)
-                                }
+                                await stockManager.addStock(symbol: stockSymbol)
                             }
                         }
                         Button("Cancel", role: .cancel) {
@@ -97,7 +80,7 @@ struct StockCard: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 6) {
-                Text(item.price)
+                Text("\(item.price)")
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
                 Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
