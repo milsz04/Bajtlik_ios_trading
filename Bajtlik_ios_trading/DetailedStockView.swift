@@ -100,11 +100,11 @@ struct DetailedStockView: View {
 
                         .font(.system(size: 20, design: .monospaced))
 
-                    Text("Market: \(stock.market)")
+                    Text("Code: \(stock.code)")
 
                         .font(.system(size: 20, design: .monospaced))
 
-                    Text("Price: \(stock.price)")
+                    Text("Price: \(stock.current)")
 
                         .font(.system(size: 20, design: .monospaced))
 

@@ -4,19 +4,40 @@ import Combine
 
 struct StockItem: Identifiable, Hashable, Codable {
     let id: UUID
+    
     let name: String
     let code: String
-    let market: String
-    let price: String
-    let change: Double
-
-    init(id: UUID = UUID(), name: String, code: String, market: String, price: String, change: Double) {
+    
+    let current: Double        // c
+    let change: Double         // d
+    let percentChange: Double  // dp
+    let high: Double           // h
+    let low: Double            // l
+    let open: Double           // o
+    let previousClose: Double  // pc
+    
+    init(
+        id: UUID = UUID(),
+        name: String,
+        code: String,
+        current: Double,
+        change: Double,
+        percentChange: Double,
+        high: Double,
+        low: Double,
+        open: Double,
+        previousClose: Double
+    ) {
         self.id = id
         self.name = name
         self.code = code
-        self.market = market
-        self.price = price
+        self.current = current
         self.change = change
+        self.percentChange = percentChange
+        self.high = high
+        self.low = low
+        self.open = open
+        self.previousClose = previousClose
     }
 }
 
@@ -32,9 +53,10 @@ final class StockManager: ObservableObject {
     }
     
     private var fileURL: URL {
-        let manager = FileManager.default
-        let documents = manager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documents.appendingPathComponent(filename)
+        FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first!
+            .appendingPathComponent(filename)
     }
     
     private func loadStocks() {
@@ -43,7 +65,7 @@ final class StockManager: ObservableObject {
             let decoded = try JSONDecoder().decode([StockItem].self, from: data)
             self.stocks = decoded
         } catch {
-            print(error)
+            print("No JSON found, creating fresh file.")
             self.stocks = []
             saveStocks()
         }
@@ -54,7 +76,7 @@ final class StockManager: ObservableObject {
             let data = try JSONEncoder().encode(stocks)
             try data.write(to: fileURL, options: .atomic)
         } catch {
-            print("nie")
+            print("Failed to save stocks:", error)
         }
     }
     
@@ -63,41 +85,55 @@ final class StockManager: ObservableObject {
         saveStocks()
     }
     
-    func addStock(symbol: String, market: String = "NASDAQ") async {
-            do {
-                let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
-                let newStock = StockItem(
-                    name: symbol,
-                    code: symbol,
-                    market: market,
-                    price: String(format: "%.2f", quote.current),
-                    change: quote.percentChange
-                )
-                stocks.append(newStock)
-                saveStocks()
-                print("Added \(symbol) with price \(quote.current)")
-            } catch {
-                print("Error fetching stock quote for \(symbol): \(error)")
-            }
+    func addStock(symbol: String) async {
+        do {
+            let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
+
+            let newStock = StockItem(
+                name: symbol,
+                code: symbol,
+                current: quote.current,
+                change: quote.change,
+                percentChange: quote.percentChange,
+                high: quote.high,
+                low: quote.low,
+                open: quote.open,
+                previousClose: quote.previousClose
+            )
+
+            stocks.append(newStock)
+            saveStocks()
+            print("Added \(symbol). Current price: \(quote.current)")
+        } catch {
+            print("Error fetching quote for \(symbol):", error)
         }
+    }
     
     func refreshAllStocks() async {
-            for (index, stock) in stocks.enumerated() {
-                do {
-                    let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
-                    stocks[index] = StockItem(
-                        id: stock.id,
-                        name: stock.name,
-                        code: stock.code,
-                        market: stock.market,
-                        price: String(format: "%.2f", quote.current),
-                        change: quote.percentChange
-                    )
-                } catch {
-                    print("⚠️ Failed to refresh \(stock.code): \(error)")
-                }
+        for (index, stock) in stocks.enumerated() {
+            do {
+                let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
+
+                stocks[index] = StockItem(
+                    id: stock.id,
+                    name: stock.name,
+                    code: stock.code,
+                    current: quote.current,
+                    change: quote.change,
+                    percentChange: quote.percentChange,
+                    high: quote.high,
+                    low: quote.low,
+                    open: quote.open,
+                    previousClose: quote.previousClose
+                )
+                
+            } catch {
+                print("Failed to refresh \(stock.code):", error)
             }
-            saveStocks()
-            print("🔁 All stocks refreshed.")
         }
+        
+        saveStocks()
+        print("All stocks refreshed.")
+    }
 }
+

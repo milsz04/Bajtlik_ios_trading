@@ -100,8 +100,8 @@ struct TradeView: View {
         .navigationBarHidden(false)
         .onAppear {
             if let stock = stockManager.selectedStock {
-                let cleanedPrice = stock.price.replacingOccurrences(of: ",", with: ".")
-                stockPrice = Double(cleanedPrice) ?? 150.25
+                stockPrice = stock.current
+                
             }
         }
     }

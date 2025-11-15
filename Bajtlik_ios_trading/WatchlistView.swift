@@ -72,7 +72,7 @@ struct StockCard: View {
                 Text(item.name)
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
-                Text(item.market)
+                Text(item.code)
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
                     .foregroundColor(.gray)
             }
@@ -80,7 +80,7 @@ struct StockCard: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 6) {
-                Text("\(item.price)")
+                Text("\(item.current)")
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
                 Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
