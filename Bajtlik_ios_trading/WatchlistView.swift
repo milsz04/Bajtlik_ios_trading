@@ -80,7 +80,7 @@ struct StockCard: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 6) {
-                Text("\(item.current)")
+                Text("$" + String(format: "%.2f", item.current))
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
                 Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
