@@ -65,7 +65,7 @@ struct WatchlistView: View {
 
 struct StockCard: View {
     let item: StockItem
-    
+    //TO jest zle tutaj powinna byc jakas struktura a nie oddzielny view ale jestem zbyt leniwy zeby to robic wiec wydam rozkaz temu ktory to czyta ;))
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
