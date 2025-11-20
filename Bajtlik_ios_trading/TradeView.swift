@@ -6,7 +6,7 @@ struct TradeView: View {
     @State private var tradeType = "Sell"
     @State private var orderType = "Market"
     @State private var shares = 1
-    @State private var stockPrice: Double = 150.25
+    @State private var stockPrice: Double = 150.2
     var estimatedCost: Double {
         Double(shares) * stockPrice
     }

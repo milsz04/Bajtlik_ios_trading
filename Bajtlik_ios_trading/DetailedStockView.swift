@@ -44,7 +44,10 @@ struct DetailedStockView: View {
 
                         Spacer()
 
-                        NavigationLink(destination: TradeView()) {
+                        NavigationLink(destination: TradeView()
+                            .environmentObject(stockManager)
+                                
+                        ) {
                             Text("Trade")
                                 .font(.system(size: 24, weight: .regular, design: .monospaced))
                                 .padding(.horizontal, 50)
