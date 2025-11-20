@@ -20,6 +20,15 @@ struct DetailedStockView: View {
                 return PricePoint(time: t, price: price)
             }
     }
+    @State private var selectedTimeRange: TimeRange = .day
+
+    enum TimeRange: String, CaseIterable{
+        case day = "D"
+        case week = "W"
+        case month = "M"
+        case sixMonths = "6M"
+        case oneYear = "1Y"
+    }
 
     
 
@@ -69,6 +78,15 @@ struct DetailedStockView: View {
                         isPositive: stock.change >= 0
                     )
                     .padding(.horizontal)
+                    
+                    Picker("Time Range", selection: $selectedTimeRange) {
+                        ForEach(TimeRange.allCases, id: \.self) { range in
+                            Text(range.rawValue).tag(range)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
 
                     Spacer()
                     Divider()
