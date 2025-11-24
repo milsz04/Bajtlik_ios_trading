@@ -18,13 +18,17 @@ struct TradeView: View {
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 24) {
+                HStack{
                 Text("Trade")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
                     .padding(.top, 20)
+                Spacer()
                 Text(stockName)
-                    .font(.system(size: 40, design: .monospaced))
-                
+                    .font(.system(size: 40, weight: .bold, design: .monospaced))
+                    .foregroundColor(.black)
+                    .padding(.top, 20)
+                }
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
                     Text("Buy").tag("Buy")
