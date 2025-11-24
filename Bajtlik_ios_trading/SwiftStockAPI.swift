@@ -47,6 +47,25 @@ struct CandleData: Codable {
     }
 }
 
+struct TradeTick: Codable {
+    let price: Double   // p
+    let volume: Double  // v
+    let timestamp: Int  // t
+    let symbol: String  // s
+
+    enum CodingKeys: String, CodingKey {
+        case price = "p"
+        case volume = "v"
+        case timestamp = "t"
+        case symbol = "s"
+    }
+}
+
+struct TradeResponse: Codable {
+    let data: [TradeTick]
+    let type: String?
+}
+
 enum ChartTimeRange: String, CaseIterable {
     case oneDay = "1D"
     case fiveDays = "5D"
@@ -89,6 +108,18 @@ final class SwiftStockAPI {
         return try JSONDecoder().decode(StockQuote.self, from: data)
     }
     
+    func fetchTrades(for symbol: String) async throws -> [TradeTick] {
+
+        guard let url = URL(string: "\(baseURL)/stock/trade?symbol=\(symbol)&token=\(apiKey)") else {
+            throw URLError(.badURL)
+        }
+
+        let (data, _) = try await URLSession.shared.data(from: url)
+
+        let decoded = try JSONDecoder().decode(TradeResponse.self, from: data)
+
+        return decoded.data
+    }
     //Fetch Historical Candles
 
     func fetchCandles(for symbol: String, range: ChartTimeRange) async throws -> CandleData {
