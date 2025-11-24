@@ -16,9 +16,9 @@ struct BajtlikView: View {
                 Text("Bajtlik")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
-                    .padding(.top, 20)
+                    .padding(.top, 0)
                 
-                Text("Bajtlik Value")
+                Text("Value")
                     .font(.system(size: 40, design: .monospaced))
                     .foregroundColor(.black)
                     .padding(.top, 20)

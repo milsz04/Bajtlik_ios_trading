@@ -22,12 +22,11 @@ struct TradeView: View {
                 Text("Trade")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
-                    .padding(.top, 20)
+                    .padding(.top, 0)
                 Spacer()
                 Text(stockName)
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
-                    .padding(.top, 20)
                 }
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
