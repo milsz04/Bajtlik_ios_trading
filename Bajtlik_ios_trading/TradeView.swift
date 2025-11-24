@@ -7,6 +7,7 @@ struct TradeView: View {
     @State private var orderType = "Market"
     @State private var shares = 1
     @State private var stockPrice: Double = 150.2
+    @State private var stockName = "firmaA"
     var estimatedCost: Double {
         Double(shares) * stockPrice
     }
@@ -21,6 +22,8 @@ struct TradeView: View {
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
                     .padding(.top, 20)
+                Text(stockName)
+                    .font(.system(size: 40, design: .monospaced))
                 
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
@@ -101,6 +104,7 @@ struct TradeView: View {
         .onAppear {
             if let stock = stockManager.selectedStock {
                 stockPrice = stock.current
+                stockName = stock.name
                 
             }
         }
