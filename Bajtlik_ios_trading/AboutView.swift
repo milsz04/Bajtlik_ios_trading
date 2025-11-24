@@ -11,7 +11,7 @@ struct AboutView: View {
                 Text("About")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
-                    .padding(.top, 20)
+                    .padding(10)
                 HStack{
                     VideoPlayer(player: AVPlayer(url: URL(string: "https://file-examples.com/storage/fe30cc5437690901c9c4eea/2017/04/file_example_MP4_480_1_5MG.mp4")!))
                         .frame(height: 250)

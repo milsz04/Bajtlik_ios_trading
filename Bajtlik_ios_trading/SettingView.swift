@@ -14,7 +14,7 @@ struct SettingView: View {
                     Text("Settings")
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
                         .foregroundColor(.black)
-                        .padding(.top, 20)
+                        .padding(.top, 0)
                     
                     Divider()
                     

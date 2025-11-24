@@ -13,7 +13,6 @@ struct CreditsView: View {
                 Text("Credits")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
-                    .padding(.leading, 10)
                     
                     Spacer()
                 }
