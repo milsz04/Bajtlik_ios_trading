@@ -29,42 +29,15 @@ struct StockQuote: Codable {
     }
 }
 
-struct CandleData: Codable {
-    let timestamps: [Double]
-    let opens: [Double]
-    let highs: [Double]
-    let lows: [Double]
-    let closes: [Double]
-    let status: String
-
-    enum CodingKeys: String, CodingKey {
-        case timestamps = "t"
-        case opens = "o"
-        case highs = "h"
-        case lows = "l"
-        case closes = "c"
-        case status = "s"
-    }
+struct CompanyProfile: Codable {
+    let name: String?
+    let ticker: String?
+    let marketCapitalization: Double?
+    let shareOutstanding: Double?
+    let logo: String?
+    let weburl: String?
 }
 
-struct TradeTick: Codable {
-    let price: Double   // p
-    let volume: Double  // v
-    let timestamp: Int  // t
-    let symbol: String  // s
-
-    enum CodingKeys: String, CodingKey {
-        case price = "p"
-        case volume = "v"
-        case timestamp = "t"
-        case symbol = "s"
-    }
-}
-
-struct TradeResponse: Codable {
-    let data: [TradeTick]
-    let type: String?
-}
 
 enum ChartTimeRange: String, CaseIterable {
     case oneDay = "1D"
@@ -108,39 +81,19 @@ final class SwiftStockAPI {
         return try JSONDecoder().decode(StockQuote.self, from: data)
     }
     
-    func fetchTrades(for symbol: String) async throws -> [TradeTick] {
-
-        guard let url = URL(string: "\(baseURL)/stock/trade?symbol=\(symbol)&token=\(apiKey)") else {
+    func fetchCompanyName(for symbol: String) async throws -> String {
+        let urlString = "\(baseURL)/stock/profile2?symbol=\(symbol)&token=\(apiKey)"
+        guard let url = URL(string: urlString) else {
             throw URLError(.badURL)
         }
 
         let (data, _) = try await URLSession.shared.data(from: url)
 
-        let decoded = try JSONDecoder().decode(TradeResponse.self, from: data)
+        let profile = try JSONDecoder().decode(CompanyProfile.self, from: data)
 
-        return decoded.data
+        return profile.name ?? symbol
     }
-    //Fetch Historical Candles
 
-    func fetchCandles(for symbol: String, range: ChartTimeRange) async throws -> CandleData {
-        let now = Int(Date().timeIntervalSince1970)
-        let from: Int
-
-        switch range {
-        case .oneDay: from = now - 86400
-        case .fiveDays: from = now - (5 * 86400)
-        case .oneMonth: from = now - (30 * 86400)
-        case .threeMonths: from = now - (90 * 86400)
-        case .oneYear: from = now - (365 * 86400)
-        }
-
-        guard let url = URL(string: "\(baseURL)/stock/candle?symbol=\(symbol)&resolution=D&from=\(from)&to=\(now)&token=\(apiKey)") else {
-            throw URLError(.badURL)
-        }
-
-        let (data, _) = try await URLSession.shared.data(from: url)
-        return try JSONDecoder().decode(CandleData.self, from: data)
-    }
 }
 
 //Private Helper Structs

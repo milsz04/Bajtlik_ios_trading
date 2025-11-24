@@ -88,9 +88,9 @@ final class StockManager: ObservableObject {
     func addStock(symbol: String) async {
         do {
             let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
-
+            let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
             let newStock = StockItem(
-                name: symbol,
+                name: name,
                 code: symbol,
                 current: quote.current,
                 change: quote.change,
