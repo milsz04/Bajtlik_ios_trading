@@ -83,7 +83,7 @@ struct StockCard: View {
                 Text("$" + String(format: "%.2f", item.current))
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
-                Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
+                Text("\(item.change > 0 ? "+" : "")\(String(item.change))")
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
                     .foregroundColor(item.change > 0 ? .green : .red)
             }

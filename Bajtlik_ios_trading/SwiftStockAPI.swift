@@ -88,7 +88,7 @@ final class SwiftStockAPI {
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode(StockQuote.self, from: data)
     }
-
+    
     //Fetch Historical Candles
 
     func fetchCandles(for symbol: String, range: ChartTimeRange) async throws -> CandleData {
