@@ -7,7 +7,7 @@ struct TradeView: View {
     @State private var orderType = "Market"
     @State private var shares = 1
     @State private var stockPrice: Double = 150.2
-    @State private var stockName = "firmaA"
+    @State private var stockCode = "firmaA"
     var estimatedCost: Double {
         Double(shares) * stockPrice
     }
@@ -24,7 +24,7 @@ struct TradeView: View {
                     .foregroundColor(.black)
                     .padding(.top, 0)
                 Spacer()
-                Text(stockName)
+                Text(stockCode)
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
                     .foregroundColor(.black)
                 }
@@ -107,7 +107,7 @@ struct TradeView: View {
         .onAppear {
             if let stock = stockManager.selectedStock {
                 stockPrice = stock.current
-                stockName = stock.name
+                stockCode = stock.code
                 
             }
         }
