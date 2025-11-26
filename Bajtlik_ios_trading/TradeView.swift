@@ -5,13 +5,26 @@ struct TradeView: View {
     
     @State private var tradeType = "Sell"
     @State private var orderType = "Market"
-    @State private var shares = 1
+    @State private var shares: Double = 1.00
     @State private var stockPrice: Double = 150.2
     @State private var stockCode = "firmaA"
     var estimatedCost: Double {
-        Double(shares) * stockPrice
+        shares * stockPrice
     }
-    
+    private static let sharesFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        formatter.minimum = 0.01
+        return formatter
+    }()
+
+    private var isSharesValid: Bool {
+        shares >= 0.01
+    }
+
     var body: some View {
         ZStack {
             Color(.systemGray6)
@@ -61,8 +74,8 @@ struct TradeView: View {
                     Text("Shares")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                     Spacer()
-                    TextField("", value: $shares, formatter: NumberFormatter())
-                        .keyboardType(.numberPad)
+                    TextField("", value: $shares, formatter: Self.sharesFormatter)
+                        .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .frame(width: 100)
