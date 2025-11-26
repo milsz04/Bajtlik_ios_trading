@@ -45,6 +45,7 @@ struct StockItem: Identifiable, Hashable, Codable {
 final class StockManager: ObservableObject {
     @Published var selectedStock: StockItem? = nil
     @Published var stocks: [StockItem] = []
+    @Published var balance: Double = 10000.0
     
     private let filename = "stocks.json"
     

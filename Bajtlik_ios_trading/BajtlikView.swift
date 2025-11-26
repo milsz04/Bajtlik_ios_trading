@@ -4,7 +4,6 @@ struct BajtlikView: View {
     @EnvironmentObject var stockManager: StockManager
     
     @State private var bajtlikVal = 12400.02
-    @State private var balance = 1100.09
     @State private var shares = 1
     
     var body: some View {
@@ -32,7 +31,7 @@ struct BajtlikView: View {
                     .font(.system(size: 40, design: .monospaced))
                     .foregroundColor(.black)
                 
-                Text("\(balance, specifier: "$%.2f")")
+                Text("\(stockManager.balance, specifier: "$%.2f")")
                     .font(.system(size: 30, design: .monospaced))
                     .foregroundColor(.black)
                 
@@ -77,12 +76,12 @@ struct StockCardBajtlik: View {
             Spacer()
             
             VStack(alignment: .trailing, spacing: 6) {
-                Text("\(item.current)")
+                Text(String(format: "%.2f", item.current))
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
                     .foregroundColor(.black)
-                Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
+                Text("\(item.percentChange > 0 ? "+" : "")\(String(format: "%.2f", item.percentChange))%")
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
-                    .foregroundColor(item.change > 0 ? .green : .red)
+                    .foregroundColor(item.percentChange > 0 ? .green : .red)
             }
         }
         .padding()

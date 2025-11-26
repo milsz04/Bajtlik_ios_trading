@@ -83,7 +83,7 @@ struct TradeView: View {
                     Text("Available")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                     Spacer()
-                    Text("$1000.00")
+                    Text(String(format: "$%.2f", stockManager.balance))
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                 }
                 
