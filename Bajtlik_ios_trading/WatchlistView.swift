@@ -1,7 +1,11 @@
 import SwiftUI
+import SwiftData
 
 struct WatchlistView: View {
     @EnvironmentObject var stockManager: StockManager
+    @Environment(\.modelContext) private var context
+    @Query(sort: \StockItem.code) private var stocks: [StockItem]
+    
     @StateObject private var fetcher = StockFetcher()
     @State private var showSearchField = false
     @State private var stockSymbol = ""
@@ -31,7 +35,8 @@ struct WatchlistView: View {
                         TextField("Enter symbol (e.g. AAPL)", text: $stockSymbol)
                         Button("Add") {
                             Task {
-                                await stockManager.addStock(symbol: stockSymbol)
+                                await stockManager.addStock(symbol: stockSymbol, in: context)
+                                stockSymbol = ""
                             }
                         }
                         Button("Cancel", role: .cancel) {
@@ -44,7 +49,7 @@ struct WatchlistView: View {
                 
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(stockManager.stocks) { item in
+                        ForEach(stocks) { item in
                             NavigationLink(
                                 destination: DetailedStockView()
                                     .environmentObject(stockManager)
@@ -57,15 +62,14 @@ struct WatchlistView: View {
                     .padding(.horizontal)
                     .padding(.bottom, .zero)
                 }
-                
             }
         }
     }
 }
 
+
 struct StockCard: View {
     let item: StockItem
-    //TO jest zle tutaj powinna byc jakas struktura a nie oddzielny view ale jestem zbyt leniwy zeby to robic wiec wydam rozkaz temu ktory to czyta ;))
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
@@ -101,5 +105,7 @@ struct StockCard: View {
     NavigationStack {
         WatchlistView()
             .environmentObject(StockManager())
+            .modelContainer(for: StockItem.self)
     }
 }
+

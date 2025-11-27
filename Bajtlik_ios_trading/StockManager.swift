@@ -1,20 +1,22 @@
 import Foundation
 import SwiftUI
+import SwiftData
 import Combine
 
-struct StockItem: Identifiable, Hashable, Codable {
-    let id: UUID
+@Model
+final class StockItem {
+    @Attribute(.unique) var id: UUID
     
-    let name: String
-    let code: String
+    var name: String
+    var code: String
     
-    let current: Double        // c
-    let change: Double         // d
-    let percentChange: Double  // dp
-    let high: Double           // h
-    let low: Double            // l
-    let open: Double           // o
-    let previousClose: Double  // pc
+    var current: Double
+    var change: Double
+    var percentChange: Double
+    var high: Double
+    var low: Double
+    var open: Double
+    var previousClose: Double
     
     init(
         id: UUID = UUID(),
@@ -41,55 +43,19 @@ struct StockItem: Identifiable, Hashable, Codable {
     }
 }
 
+
 @MainActor
 final class StockManager: ObservableObject {
     @Published var selectedStock: StockItem? = nil
-    @Published var stocks: [StockItem] = []
-    @Published var balance: Double = 10000.0
+    @Published var balance: Double = 10000.00
     
-    private let filename = "stocks.json"
+    init() {}
     
-    init() {
-        loadStocks()
-    }
-    
-    private var fileURL: URL {
-        FileManager.default
-            .urls(for: .documentDirectory, in: .userDomainMask)
-            .first!
-            .appendingPathComponent(filename)
-    }
-    
-    private func loadStocks() {
-        do {
-            let data = try Data(contentsOf: fileURL)
-            let decoded = try JSONDecoder().decode([StockItem].self, from: data)
-            self.stocks = decoded
-        } catch {
-            print("No JSON found, creating fresh file.")
-            self.stocks = []
-            saveStocks()
-        }
-    }
-    
-    private func saveStocks() {
-        do {
-            let data = try JSONEncoder().encode(stocks)
-            try data.write(to: fileURL, options: .atomic)
-        } catch {
-            print("Failed to save stocks:", error)
-        }
-    }
-    
-    func removeStock(_ stock: StockItem) {
-        stocks.removeAll { $0.id == stock.id }
-        saveStocks()
-    }
-    
-    func addStock(symbol: String) async {
+    func addStock(symbol: String, in context: ModelContext) async {
         do {
             let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
             let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
+
             let newStock = StockItem(
                 name: name,
                 code: symbol,
@@ -102,39 +68,49 @@ final class StockManager: ObservableObject {
                 previousClose: quote.previousClose
             )
 
-            stocks.append(newStock)
-            saveStocks()
+            context.insert(newStock)
+            try context.save()
             print("Added \(symbol). Current price: \(quote.current)")
         } catch {
             print("Error fetching quote for \(symbol):", error)
         }
     }
     
-    func refreshAllStocks() async {
-        for (index, stock) in stocks.enumerated() {
+    func removeStock(_ stock: StockItem, in context: ModelContext) {
+        context.delete(stock)
+        do {
+            try context.save()
+        } catch {
+            print("Failed to remove stock:", error)
+        }
+    }
+    
+    func refreshAllStocks(stocks: [StockItem], in context: ModelContext) async {
+        for stock in stocks {
             do {
                 let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
 
-                stocks[index] = StockItem(
-                    id: stock.id,
-                    name: stock.name,
-                    code: stock.code,
-                    current: quote.current,
-                    change: quote.change,
-                    percentChange: quote.percentChange,
-                    high: quote.high,
-                    low: quote.low,
-                    open: quote.open,
-                    previousClose: quote.previousClose
-                )
+                stock.current = quote.current
+                stock.change = quote.change
+                stock.percentChange = quote.percentChange
+                stock.high = quote.high
+                stock.low = quote.low
+                stock.open = quote.open
+                stock.previousClose = quote.previousClose
                 
             } catch {
                 print("Failed to refresh \(stock.code):", error)
             }
         }
         
-        saveStocks()
-        print("All stocks refreshed.")
+        do {
+            try context.save()
+            print("All stocks refreshed.")
+        } catch {
+            print("Failed to save refreshed stocks:", error)
+        }
     }
 }
+
+
 

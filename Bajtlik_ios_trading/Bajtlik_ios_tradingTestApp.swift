@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct Bajtlik_ios_tradingTestApp: App {
@@ -9,5 +10,6 @@ struct Bajtlik_ios_tradingTestApp: App {
             HomeView()
                 .environmentObject(stockManager)
         }
+        .modelContainer(for: StockItem.self)
     }
 }
