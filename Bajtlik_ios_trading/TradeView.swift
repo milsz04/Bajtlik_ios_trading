@@ -11,9 +11,11 @@ struct TradeView: View {
     
     @State private var showInsufficientFundsAlert = false
     @State private var showSuccessAlert = false
+
     var estimatedCost: Double {
         shares * stockPrice
     }
+
     private static let sharesFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
         formatter.locale = Locale(identifier: "en_US_POSIX")
@@ -23,27 +25,32 @@ struct TradeView: View {
         formatter.minimum = 0.01
         return formatter
     }()
-    
+
     private var isSharesValid: Bool {
         shares >= 0.01
     }
-    
+
     var body: some View {
         ZStack {
             Color(.systemGray6)
                 .ignoresSafeArea()
             
             VStack(alignment: .leading, spacing: 24) {
-                HStack{
+                
+                // HEADER
+                HStack {
                     Text("Trade")
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
                         .foregroundColor(.black)
-                        .padding(.top, 0)
+                    
                     Spacer()
+                    
                     Text(stockCode)
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
                         .foregroundColor(.black)
                 }
+                
+                // TRADE TYPE PICKER
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
                     Text("Buy").tag("Buy")
@@ -51,8 +58,9 @@ struct TradeView: View {
                 .pickerStyle(.segmented)
                 .scaleEffect(2)
                 .frame(height: 40)
-                .padding(.horizontal,100)
+                .padding(.horizontal, 100)
                 
+                // ORDER TYPE PICKER
                 Picker("Order Type", selection: $orderType) {
                     Text("Market").tag("Market")
                     Text("Limit").tag("Limit")
@@ -65,6 +73,7 @@ struct TradeView: View {
                 Divider()
                     .padding(.vertical, 10)
                 
+                // PRICE SECTION
                 HStack {
                     Text("Price per share")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
@@ -77,15 +86,14 @@ struct TradeView: View {
                     Text("Shares")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                     Spacer()
+                    
                     TextField("", value: $shares, formatter: Self.sharesFormatter)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .frame(width: 100)
                         .textFieldStyle(.roundedBorder)
-                    
                 }
-                
                 
                 HStack {
                     Text("Estimated cost")
@@ -102,28 +110,21 @@ struct TradeView: View {
                     Text(String(format: "$%.2f", stockManager.balance))
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                 }
-                
+
                 Spacer()
                 
-                
+                // PLACE ORDER BUTTON
                 Button(action: {
                     print("\(tradeType) \(shares) shares with \(orderType) order at \(stockPrice)$ each")
-                    
-                    switch tradeType {
-                    case "Buy":
+
+                    if tradeType == "Buy" {
                         let success = stockManager.tryBuy(shares: shares, pricePerShare: stockPrice)
+
                         if success {
                             showSuccessAlert = true
                         } else {
                             showInsufficientFundsAlert = true
                         }
-                        
-                    case "Sell":
-                        // Here you can add selling logic later (e.g. increase balance)
-                        print("Sell logic not implemented yet")
-                        
-                    default:
-                        break
                     }
                 }) {
                     Text("Place order")
@@ -134,27 +135,27 @@ struct TradeView: View {
                         .foregroundColor(.black)
                 }
                 .buttonStyle(.glass)
-                .alert("Insufficient Funds", isPresented: $showInsufficientFundsAlert) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text("You don't have enough available balance to complete this purchase.")
-                }
-                .alert("Order Placed", isPresented: $showSuccessAlert) {
-                    Button("OK", role: .cancel) { }
-                } message: {
-                    Text("Your buy order has been executed.")
-                }
-                
-                .padding()
             }
-            .navigationBarHidden(false)
-            .onAppear {
-                if let stock = stockManager.selectedStock {
-                    stockPrice = stock.current
-                    stockCode = stock.code
-                    
-                }
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 30)
+        }
+        .navigationBarHidden(false)
+        .onAppear {
+            if let stock = stockManager.selectedStock {
+                stockPrice = stock.current
+                stockCode = stock.code
             }
+        }
+        .alert("Insufficient Funds", isPresented: $showInsufficientFundsAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("You do not have enough balance for this purchase.")
+        }
+        .alert("Order Placed", isPresented: $showSuccessAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("Your order was successfully completed.")
         }
     }
 }
@@ -163,3 +164,4 @@ struct TradeView: View {
     TradeView()
         .environmentObject(StockManager())
 }
+
