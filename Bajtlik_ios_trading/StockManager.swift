@@ -110,6 +110,14 @@ final class StockManager: ObservableObject {
             print("Failed to save refreshed stocks:", error)
         }
     }
+    func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
+          let totalCost = shares * pricePerShare
+          guard totalCost <= balance else {
+              return false
+          }
+          balance -= totalCost
+          return true
+      }
 }
 
 

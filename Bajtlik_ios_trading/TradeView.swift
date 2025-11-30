@@ -8,6 +8,9 @@ struct TradeView: View {
     @State private var shares: Double = 1.00
     @State private var stockPrice: Double = 150.2
     @State private var stockCode = "firmaA"
+    
+    @State private var showInsufficientFundsAlert = false
+    @State private var showSuccessAlert = false
     var estimatedCost: Double {
         shares * stockPrice
     }
@@ -20,11 +23,11 @@ struct TradeView: View {
         formatter.minimum = 0.01
         return formatter
     }()
-
+    
     private var isSharesValid: Bool {
         shares >= 0.01
     }
-
+    
     var body: some View {
         ZStack {
             Color(.systemGray6)
@@ -32,14 +35,14 @@ struct TradeView: View {
             
             VStack(alignment: .leading, spacing: 24) {
                 HStack{
-                Text("Trade")
-                    .font(.system(size: 40, weight: .bold, design: .monospaced))
-                    .foregroundColor(.black)
-                    .padding(.top, 0)
-                Spacer()
-                Text(stockCode)
-                    .font(.system(size: 40, weight: .bold, design: .monospaced))
-                    .foregroundColor(.black)
+                    Text("Trade")
+                        .font(.system(size: 40, weight: .bold, design: .monospaced))
+                        .foregroundColor(.black)
+                        .padding(.top, 0)
+                    Spacer()
+                    Text(stockCode)
+                        .font(.system(size: 40, weight: .bold, design: .monospaced))
+                        .foregroundColor(.black)
                 }
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
@@ -82,7 +85,7 @@ struct TradeView: View {
                         .textFieldStyle(.roundedBorder)
                     
                 }
-
+                
                 
                 HStack {
                     Text("Estimated cost")
@@ -102,8 +105,26 @@ struct TradeView: View {
                 
                 Spacer()
                 
+                
                 Button(action: {
                     print("\(tradeType) \(shares) shares with \(orderType) order at \(stockPrice)$ each")
+                    
+                    switch tradeType {
+                    case "Buy":
+                        let success = stockManager.tryBuy(shares: shares, pricePerShare: stockPrice)
+                        if success {
+                            showSuccessAlert = true
+                        } else {
+                            showInsufficientFundsAlert = true
+                        }
+                        
+                    case "Sell":
+                        // Here you can add selling logic later (e.g. increase balance)
+                        print("Sell logic not implemented yet")
+                        
+                    default:
+                        break
+                    }
                 }) {
                     Text("Place order")
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
@@ -113,15 +134,26 @@ struct TradeView: View {
                         .foregroundColor(.black)
                 }
                 .buttonStyle(.glass)
-            }
-            .padding()
-        }
-        .navigationBarHidden(false)
-        .onAppear {
-            if let stock = stockManager.selectedStock {
-                stockPrice = stock.current
-                stockCode = stock.code
+                .alert("Insufficient Funds", isPresented: $showInsufficientFundsAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("You don't have enough available balance to complete this purchase.")
+                }
+                .alert("Order Placed", isPresented: $showSuccessAlert) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text("Your buy order has been executed.")
+                }
                 
+                .padding()
+            }
+            .navigationBarHidden(false)
+            .onAppear {
+                if let stock = stockManager.selectedStock {
+                    stockPrice = stock.current
+                    stockCode = stock.code
+                    
+                }
             }
         }
     }
