@@ -4,6 +4,8 @@ struct HomeView: View {
     @State private var showContentView = false
     @State private var opacity = 1.0
     
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = false
+    
     var body: some View {
         ZStack {
             if showContentView {
@@ -21,11 +23,11 @@ struct HomeView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 200, height: 200)
-                            .foregroundColor(.black.opacity(0.85))
+                            .foregroundColor(isDarkMode ? Color.white : Color.black)
                         Spacer()
                         Text("Bajtlik")
                             .font(.system(size: 42, weight: .bold, design: .monospaced))
-                            .foregroundColor(.black)
+                            .foregroundColor(isDarkMode ? Color.white : Color.black)
                         
                         Text("Welcome!")
                             .font(.system(size: 24, weight: .regular, design: .monospaced))
@@ -52,6 +54,7 @@ struct HomeView: View {
                 .transition(.opacity)
             }
         }
+        .preferredColorScheme(.light)
     }
 }
 
@@ -59,3 +62,4 @@ struct HomeView: View {
     HomeView()
         .environmentObject(StockManager())
 }
+

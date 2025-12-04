@@ -8,7 +8,7 @@ struct StockCardBajtlik: View {
             VStack(alignment: .leading, spacing: 6) {
                 Text(item.name)
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 Text(item.code)
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
                     .foregroundColor(.gray)
@@ -19,7 +19,7 @@ struct StockCardBajtlik: View {
             VStack(alignment: .trailing, spacing: 6) {
                 Text("$" + String(format: "%.2f", item.current))
                     .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
                     .font(.system(size: 14, weight: .regular, design: .monospaced))
                     .foregroundColor(item.change > 0 ? .green : .red)

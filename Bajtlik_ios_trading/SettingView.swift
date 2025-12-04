@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingView: View {
-    @State private var isLightMode: Bool = false
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     @State private var isNotificationMode: Bool = false
     
     var body: some View {
@@ -13,17 +13,18 @@ struct SettingView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text("Settings")
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                         .padding(.top, 0)
                     
                     Divider()
                     
                     HStack {
-                        Text("Light mode")
+                        Text("Dark mode")
                             .font(.system(size: 18, weight: .medium, design: .monospaced))
+                            .foregroundColor(.primary)
                         
                         Spacer()
-                        Toggle("", isOn: $isLightMode)
+                        Toggle("", isOn: $isDarkMode)
                             .labelsHidden()
                             .tint(.green)
                     }
@@ -33,6 +34,7 @@ struct SettingView: View {
                     HStack {
                         Text("Notifications")
                             .font(.system(size: 18, weight: .medium, design: .monospaced))
+                            .foregroundColor(.primary)
                         
                         Spacer()
                         Toggle("", isOn: $isNotificationMode)
@@ -46,9 +48,10 @@ struct SettingView: View {
                         HStack {
                             Text("About")
                                 .font(.system(size: 18, weight: .medium, design: .monospaced))
+                                .foregroundColor(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.gray.opacity(0.8))
+                                .foregroundColor(.secondary)
                         }
                     }
                     
@@ -59,9 +62,10 @@ struct SettingView: View {
                         HStack {
                             Text("Credits")
                                 .font(.system(size: 18, weight: .medium, design: .monospaced))
+                                .foregroundColor(.primary)
                             Spacer()
                             Image(systemName: "chevron.right")
-                                .foregroundColor(.gray.opacity(0.8))
+                                .foregroundColor(.secondary)
                         }
                     }
                     
@@ -80,3 +84,4 @@ struct SettingView: View {
     SettingView()
         .environmentObject(StockManager())
 }
+

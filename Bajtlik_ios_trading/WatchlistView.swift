@@ -10,6 +10,19 @@ struct WatchlistView: View {
     @State private var showSearchField = false
     @State private var stockSymbol = ""
     
+    @State private var showSearchBar = false
+    @State private var searchText = ""
+    
+    @AppStorage("isDarkMode") private var isDarkMode: Bool = false
+    
+    private var filteredStocks: [StockItem] {
+        guard !searchText.isEmpty else { return stocks }
+        return stocks.filter { item in
+            item.name.lowercased().contains(searchText.lowercased()) ||
+            item.code.lowercased().contains(searchText.lowercased())
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color(.systemGray6)
@@ -19,16 +32,35 @@ struct WatchlistView: View {
                 HStack {
                     Text("Watchlist")
                         .font(.system(size: 36, weight: .bold, design: .monospaced))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
+                    
                     Spacer()
+                    
+                    Button {
+                        withAnimation(.easeInOut) {
+                            showSearchBar.toggle()
+                            if !showSearchBar {
+                                searchText = ""
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                            .font(.system(size: 20, weight: .bold))
+                            .foregroundColor(isDarkMode ? Color.black : Color.white )
+                            .padding(10)
+                            .background(Color.primary
+                            )
+                            .clipShape(Circle())
+                    }
+                    
                     Button(action: {
                         showSearchField = true
                     }) {
                         Label("", systemImage: "plus.circle.fill")
                             .font(.system(size: 40, weight: .semibold))
-                            .foregroundColor(Color(.black))
+                            .foregroundColor(Color.primary)
                             .padding(.horizontal, 10)
                     }
                     .alert("Add Stock Symbol", isPresented: $showSearchField) {
@@ -47,15 +79,26 @@ struct WatchlistView: View {
                     }
                 }
                 
+                if showSearchBar {
+                    TextField("Search saved stocks…", text: $searchText)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .padding(10)
+                        .background(isDarkMode ? Color.black : Color.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal, 20)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+                
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(stocks) { item in
+                        ForEach(filteredStocks) { item in
                             NavigationLink(
                                 destination: DetailedStockView()
                                     .environmentObject(stockManager)
                                     .onAppear { stockManager.selectedStock = item }
                             ) {
-                                StockCard(item: item)
+                                StockCardBajtlik(item: item)
                             }
                         }
                     }
@@ -66,46 +109,3 @@ struct WatchlistView: View {
         }
     }
 }
-
-
-struct StockCard: View {
-    let item: StockItem
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(item.name)
-                    .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.black)
-                Text(item.code)
-                    .font(.system(size: 14, weight: .regular, design: .monospaced))
-                    .foregroundColor(.gray)
-            }
-            
-            Spacer()
-            
-            VStack(alignment: .trailing, spacing: 6) {
-                Text("$" + String(format: "%.2f", item.current))
-                    .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.black)
-                Text("\(item.change > 0 ? "+" : "")\(String(item.change))")
-                    .font(.system(size: 14, weight: .regular, design: .monospaced))
-                    .foregroundColor(item.change > 0 ? .green : .red)
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemGray4))
-                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
-        )
-    }
-}
-
-#Preview {
-    NavigationStack {
-        WatchlistView()
-            .environmentObject(StockManager())
-            .modelContainer(for: StockItem.self)
-    }
-}
-

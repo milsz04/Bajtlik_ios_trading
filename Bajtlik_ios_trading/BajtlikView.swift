@@ -19,7 +19,7 @@ struct BajtlikView: View {
                 
                 Text("Bajtlik")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                 
                 Text("Value")
                     .font(.system(size: 40, design: .monospaced))
@@ -53,6 +53,7 @@ struct BajtlikView: View {
         .navigationBarHidden(false)
     }
 }
+
 
 
 

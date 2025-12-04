@@ -12,7 +12,7 @@ struct CreditsView: View {
                 HStack {
                 Text("Credits")
                     .font(.system(size: 40, weight: .bold, design: .monospaced))
-                    .foregroundColor(.black)
+                    .foregroundColor(.primary)
                     
                     Spacer()
                 }
@@ -74,3 +74,4 @@ struct CreditsView: View {
     CreditsView()
         .environmentObject(StockManager())
 }
+

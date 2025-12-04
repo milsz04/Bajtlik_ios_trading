@@ -40,7 +40,7 @@ struct DetailedStockView: View {
                     HStack {
                         Text(stock.code)
                             .font(.system(size: 40, weight: .bold, design: .monospaced))
-                            .foregroundColor(.black)
+                            .foregroundColor(.primary)
 
                         Spacer()
 
@@ -137,3 +137,4 @@ struct DetailedStockView: View {
             .environmentObject(StockManager())
     }
 }
+

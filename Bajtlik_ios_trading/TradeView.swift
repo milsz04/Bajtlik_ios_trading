@@ -41,13 +41,13 @@ struct TradeView: View {
                 HStack {
                     Text("Trade")
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                     
                     Spacer()
                     
                     Text(stockCode)
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
                 
                 // TRADE TYPE PICKER
@@ -132,7 +132,7 @@ struct TradeView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 18)
                         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
-                        .foregroundColor(.black)
+                        .foregroundColor(.primary)
                 }
                 .buttonStyle(.glass)
             }

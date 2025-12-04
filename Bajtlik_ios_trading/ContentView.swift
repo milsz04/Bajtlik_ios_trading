@@ -51,3 +51,4 @@ struct ContentView: View {
     ContentView()
         .environmentObject(StockManager())
 }
+
