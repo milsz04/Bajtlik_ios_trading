@@ -38,15 +38,6 @@ struct CompanyProfile: Codable {
     let weburl: String?
 }
 
-
-enum ChartTimeRange: String, CaseIterable {
-    case oneDay = "1D"
-    case fiveDays = "5D"
-    case oneMonth = "1M"
-    case threeMonths = "3M"
-    case oneYear = "1Y"
-}
-
 //API Manager
 
 @MainActor

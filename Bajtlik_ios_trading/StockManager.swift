@@ -120,5 +120,3 @@ final class StockManager: ObservableObject {
       }
 }
 
-
-

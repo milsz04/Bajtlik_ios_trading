@@ -32,4 +32,3 @@ struct AboutView: View {
     AboutView()
         .environmentObject(StockManager())
 }
-

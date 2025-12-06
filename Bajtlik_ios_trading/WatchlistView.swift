@@ -109,3 +109,4 @@ struct WatchlistView: View {
         }
     }
 }
+

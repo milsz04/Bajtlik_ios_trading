@@ -62,4 +62,3 @@ struct HomeView: View {
     HomeView()
         .environmentObject(StockManager())
 }
-

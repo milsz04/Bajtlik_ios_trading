@@ -134,7 +134,7 @@ struct TradeView: View {
                         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
                         .foregroundColor(.primary)
                 }
-                .buttonStyle(.glass)
+                //.buttonStyle(.glass)
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
@@ -164,4 +164,5 @@ struct TradeView: View {
     TradeView()
         .environmentObject(StockManager())
 }
+
 
