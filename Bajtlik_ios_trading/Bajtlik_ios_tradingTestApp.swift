@@ -6,7 +6,6 @@ struct Bajtlik_ios_tradingTestApp: App {
     @StateObject private var stockManager = StockManager()
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     
-    
     var body: some Scene {
         WindowGroup {
             HomeView()
@@ -16,4 +15,3 @@ struct Bajtlik_ios_tradingTestApp: App {
         .modelContainer(for: StockItem.self)
     }
 }
-

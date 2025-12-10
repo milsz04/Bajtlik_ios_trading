@@ -1,6 +1,8 @@
 import Foundation
 import SwiftUI
 
+// --- Data Models ---
+
 struct StockSearchResult: Identifiable, Codable {
     var id: String { symbol ?? UUID().uuidString }
     var symbol: String?
@@ -38,20 +40,19 @@ struct CompanyProfile: Codable {
     let weburl: String?
 }
 
-//API Manager
-
 @MainActor
 final class SwiftStockAPI {
     static let shared = SwiftStockAPI()
-    
     private let apiKey = "d486td1r01qk80bjn1dgd486td1r01qk80bjn1e0"
-    
+
     private let baseURL = "https://finnhub.io/api/v1"
 
-    //Stock Search
-
     func searchStocks(matching term: String) async throws -> [StockSearchResult] {
-        guard let url = URL(string: "\(baseURL)/search?q=\(term)&token=\(apiKey)") else {
+        let trimmed = term.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
+        guard let encoded = trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed),
+              let url = URL(string: "\(baseURL)/search?q=\(encoded)&token=\(apiKey)") else {
             throw URLError(.badURL)
         }
 
@@ -60,10 +61,8 @@ final class SwiftStockAPI {
         return decoded.result
     }
 
-    //Fetch Stock Quote
-
     func fetchQuote(for symbol: String) async throws -> StockQuote {
-        
+
         guard let url = URL(string: "\(baseURL)/quote?symbol=\(symbol)&token=\(apiKey)") else {
             throw URLError(.badURL)
         }
@@ -71,7 +70,7 @@ final class SwiftStockAPI {
         let (data, _) = try await URLSession.shared.data(from: url)
         return try JSONDecoder().decode(StockQuote.self, from: data)
     }
-    
+
     func fetchCompanyName(for symbol: String) async throws -> String {
         let urlString = "\(baseURL)/stock/profile2?symbol=\(symbol)&token=\(apiKey)"
         guard let url = URL(string: urlString) else {
@@ -84,13 +83,9 @@ final class SwiftStockAPI {
 
         return profile.name ?? symbol
     }
-
 }
-
-//Private Helper Structs
 
 private struct SearchResponse: Codable {
     let count: Int
     let result: [StockSearchResult]
 }
-

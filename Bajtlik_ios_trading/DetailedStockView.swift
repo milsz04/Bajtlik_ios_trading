@@ -63,7 +63,7 @@ struct DetailedStockView: View {
                             .foregroundColor(stock.change > 0 ? .green : .red)
                     }
                     
-                    Spacer(minLength: 8)
+                    //Spacer()
                     
                     VStack(spacing: 12) {
                         if isLoadingChart {
@@ -94,8 +94,8 @@ struct DetailedStockView: View {
                         }
                         .pickerStyle(.segmented)
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 4)
+//                    .padding(.horizontal)
+//                    .padding(.top, 4)
                     
                     Divider()
                         .padding(.top, 8)
@@ -130,7 +130,7 @@ struct DetailedStockView: View {
                         }
                     }
                     
-                    Spacer(minLength: 8)
+                    Spacer()
                 }
                 .padding()
                 .onAppear {
@@ -236,5 +236,3 @@ extension DetailedStockView.TimeRange {
             .environmentObject(StockManager())
     }
 }
-
-

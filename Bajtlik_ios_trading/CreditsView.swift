@@ -74,4 +74,3 @@ struct CreditsView: View {
     CreditsView()
         .environmentObject(StockManager())
 }
-

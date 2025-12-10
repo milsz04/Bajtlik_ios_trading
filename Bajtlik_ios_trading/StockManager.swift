@@ -6,10 +6,10 @@ import Combine
 @Model
 final class StockItem {
     @Attribute(.unique) var id: UUID
-    
+
     var name: String
     var code: String
-    
+
     var current: Double
     var change: Double
     var percentChange: Double
@@ -17,7 +17,7 @@ final class StockItem {
     var low: Double
     var open: Double
     var previousClose: Double
-    
+
     init(
         id: UUID = UUID(),
         name: String,
@@ -43,16 +43,30 @@ final class StockItem {
     }
 }
 
-
 @MainActor
 final class StockManager: ObservableObject {
     @Published var selectedStock: StockItem? = nil
     @Published var balance: Double = 10000.00
-    
+
     init() {}
-    
-    func addStock(symbol: String, in context: ModelContext) async {
+
+    func addStock(query: String, in context: ModelContext) async {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
         do {
+            // Assume SwiftStockAPI is defined elsewhere and handles fetching/decoding
+            let results = try await SwiftStockAPI.shared.searchStocks(matching: trimmed)
+
+            let bestMatch = results.first(where: { ($0.type ?? "") == "Common Stock" }) ?? results.first
+
+            guard let match = bestMatch else {
+                print("No search results for: \(trimmed)")
+                return
+            }
+
+            let symbol = match.symbol ?? match.displaySymbol ?? trimmed.uppercased()
+
             let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
             let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
 
@@ -70,12 +84,12 @@ final class StockManager: ObservableObject {
 
             context.insert(newStock)
             try context.save()
-            print("Added \(symbol). Current price: \(quote.current)")
+            print("Added \(symbol) (\(trimmed)). Current price: \(quote.current)")
         } catch {
-            print("Error fetching quote for \(symbol):", error)
+            print("Error adding stock for query '\(trimmed)':", error)
         }
     }
-    
+
     func removeStock(_ stock: StockItem, in context: ModelContext) {
         context.delete(stock)
         do {
@@ -84,10 +98,11 @@ final class StockManager: ObservableObject {
             print("Failed to remove stock:", error)
         }
     }
-    
+
     func refreshAllStocks(stocks: [StockItem], in context: ModelContext) async {
         for stock in stocks {
             do {
+                // Assume SwiftStockAPI is defined elsewhere and handles fetching/decoding
                 let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
 
                 stock.current = quote.current
@@ -97,12 +112,12 @@ final class StockManager: ObservableObject {
                 stock.low = quote.low
                 stock.open = quote.open
                 stock.previousClose = quote.previousClose
-                
+
             } catch {
                 print("Failed to refresh \(stock.code):", error)
             }
         }
-        
+
         do {
             try context.save()
             print("All stocks refreshed.")
@@ -110,13 +125,13 @@ final class StockManager: ObservableObject {
             print("Failed to save refreshed stocks:", error)
         }
     }
-    func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
-          let totalCost = shares * pricePerShare
-          guard totalCost <= balance else {
-              return false
-          }
-          balance -= totalCost
-          return true
-      }
-}
 
+    func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
+        let totalCost = shares * pricePerShare
+        guard totalCost <= balance else {
+            return false
+        }
+        balance -= totalCost
+        return true
+    }
+}

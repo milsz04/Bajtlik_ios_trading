@@ -5,16 +5,16 @@ struct WatchlistView: View {
     @EnvironmentObject var stockManager: StockManager
     @Environment(\.modelContext) private var context
     @Query(sort: \StockItem.code) private var stocks: [StockItem]
-    
+
     @StateObject private var fetcher = StockFetcher()
     @State private var showSearchField = false
     @State private var stockSymbol = ""
-    
+
     @State private var showSearchBar = false
     @State private var searchText = ""
-    
+
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
-    
+
     private var filteredStocks: [StockItem] {
         guard !searchText.isEmpty else { return stocks }
         return stocks.filter { item in
@@ -22,12 +22,12 @@ struct WatchlistView: View {
             item.code.lowercased().contains(searchText.lowercased())
         }
     }
-    
+
     var body: some View {
         ZStack {
             Color(.systemGray6)
                 .ignoresSafeArea()
-            
+
             VStack(alignment: .leading, spacing: 20) {
                 HStack {
                     Text("Watchlist")
@@ -35,9 +35,9 @@ struct WatchlistView: View {
                         .foregroundColor(.primary)
                         .padding(.horizontal, 20)
                         .padding(.top, 10)
-                    
+
                     Spacer()
-                    
+
                     Button {
                         withAnimation(.easeInOut) {
                             showSearchBar.toggle()
@@ -50,11 +50,10 @@ struct WatchlistView: View {
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(isDarkMode ? Color.black : Color.white )
                             .padding(10)
-                            .background(Color.primary
-                            )
+                            .background(Color.primary)
                             .clipShape(Circle())
                     }
-                    
+
                     Button(action: {
                         showSearchField = true
                     }) {
@@ -65,9 +64,11 @@ struct WatchlistView: View {
                     }
                     .alert("Add Stock Symbol", isPresented: $showSearchField) {
                         TextField("Enter symbol (e.g. AAPL)", text: $stockSymbol)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled(true)
                         Button("Add") {
                             Task {
-                                await stockManager.addStock(symbol: stockSymbol, in: context)
+                                await stockManager.addStock(query: stockSymbol, in: context)
                                 stockSymbol = ""
                             }
                         }
@@ -78,7 +79,7 @@ struct WatchlistView: View {
                         Text("Type the stock symbol you want to add to your watchlist.")
                     }
                 }
-                
+
                 if showSearchBar {
                     TextField("Search saved stocks…", text: $searchText)
                         .textInputAutocapitalization(.never)
@@ -89,16 +90,20 @@ struct WatchlistView: View {
                         .padding(.horizontal, 20)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
-                
+
                 ScrollView {
                     VStack(spacing: 16) {
                         ForEach(filteredStocks) { item in
-                            NavigationLink(
-                                destination: DetailedStockView()
-                                    .environmentObject(stockManager)
-                                    .onAppear { stockManager.selectedStock = item }
-                            ) {
-                                StockCardBajtlik(item: item)
+                            SwipeToDeleteRow {
+                                NavigationLink(
+                                    destination: DetailedStockView()
+                                        .environmentObject(stockManager)
+                                        .onAppear { stockManager.selectedStock = item }
+                                ) {
+                                    StockCardBajtlik(item: item)
+                                }
+                            } onDelete: {
+                                stockManager.removeStock(item, in: context)
                             }
                         }
                     }
@@ -109,4 +114,3 @@ struct WatchlistView: View {
         }
     }
 }
-

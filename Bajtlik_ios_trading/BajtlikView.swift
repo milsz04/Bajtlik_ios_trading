@@ -53,5 +53,3 @@ struct BajtlikView: View {
         .navigationBarHidden(false)
     }
 }
-
-
