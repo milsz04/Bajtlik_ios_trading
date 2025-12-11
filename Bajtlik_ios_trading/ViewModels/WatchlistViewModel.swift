@@ -12,7 +12,7 @@ final class WatchlistViewModel: ObservableObject {
     func filteredStocks(from stocks: [StockItem]) -> [StockItem] {
         guard !searchText.isEmpty else { return stocks }
         
-        let query =  searchText.lowercased()
+        //let query =  searchText.lowercased()
         return stocks.filter { item in
             item.name.lowercased().contains(searchText.lowercased()) ||
             item.code.lowercased().contains(searchText.lowercased())

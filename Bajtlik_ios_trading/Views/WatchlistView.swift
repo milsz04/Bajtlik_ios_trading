@@ -7,13 +7,10 @@ struct WatchlistView: View {
     @Query(sort: \StockItem.code) private var stocks: [StockItem]
 
     @StateObject private var fetcher = StockFetcher()
-
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
-    
     @StateObject private var viewModel = WatchlistViewModel()
-
     @State private var selectedStockForDetails: StockItem?
-    
+
     var body: some View {
         ZStack {
             Color(.systemGray6)
@@ -81,25 +78,41 @@ struct WatchlistView: View {
                         .padding(.horizontal, 20)
                         .transition(.move(edge: .top).combined(with: .opacity))
                 }
-
-                ScrollView {
-                    VStack(spacing: 16) {
-                        ForEach(viewModel.filteredStocks(from: stocks)) { item in
-                            SwipeToDeleteRow {
-                                NavigationLink(
-                                    destination: DetailedStockView()
-                                        .environmentObject(stockManager)
-                                        .onAppear { stockManager.selectedStock = item }
-                                ) {
-                                    StockCardBajtlik(item: item)
-                                }
-                            } onDelete: {
-                                stockManager.removeStock(item, in: context)
+                List {
+                    ForEach(viewModel.filteredStocks(from: stocks)) { item in
+                        StockCardBajtlik(item: item)
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                selectedStockForDetails = item
+                                stockManager.selectedStock = item
                             }
-                        }
+                            .padding(.vertical, 8)
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button(role: .destructive) {
+                                    stockManager.removeStock(item, in: context)
+                                } label: {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.white)            // kolor koła
+                                            .frame(width: 32, height: 32)
+                                        
+                                        Image(systemName: "trash")
+                                            .font(.system(size: 16, weight: .semibold))
+                                    }
+                                }
+                                
+                            }
+                            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                            .listRowSeparator(.hidden)
+                            .listRowBackground(Color.clear)
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, .zero)
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .navigationDestination(item: $selectedStockForDetails) { item in
+                    DetailedStockView()
+                        .environmentObject(stockManager)
+                        .onAppear { stockManager.selectedStock = item }
                 }
             }
         }

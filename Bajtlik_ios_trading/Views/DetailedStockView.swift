@@ -3,9 +3,8 @@ import SwiftUI
 struct DetailedStockView: View {
     @EnvironmentObject var stockManager: StockManager
     @State private var selectedTimeRange: TimeRange = .oneDay
-    
     @StateObject private var viewModel = DetailedStockViewModel()
-    
+
     enum TimeRange: String, CaseIterable {
         case oneDay      = "1D"
         case sevenDays   = "7D"
@@ -13,21 +12,20 @@ struct DetailedStockView: View {
         case sixMonths   = "6M"
         case oneYear     = "1Y"
     }
-    
+
     var body: some View {
         ZStack {
             Color(.systemGray6).ignoresSafeArea()
-            
+
             if let stock = stockManager.selectedStock {
                 VStack(alignment: .leading, spacing: 16) {
-                    
                     HStack {
                         Text(stock.code)
                             .font(.system(size: 40, weight: .bold, design: .monospaced))
                             .foregroundColor(.primary)
-                        
+
                         Spacer()
-                        
+
                         NavigationLink(
                             destination: TradeView()
                                 .environmentObject(stockManager)
@@ -45,24 +43,22 @@ struct DetailedStockView: View {
                                 .foregroundColor(.black.opacity(0.8))
                         }
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Name: \(stock.name)")
                             .font(.system(size: 20, design: .monospaced))
-                        
+
                         Text("Code: \(stock.code)")
                             .font(.system(size: 20, design: .monospaced))
-                        
+
                         Text("Price: $\(String(format: "%.2f", stock.current))")
                             .font(.system(size: 20, design: .monospaced))
-                        
+
                         Text("Change: \(stock.change > 0 ? "+" : "")\(String(stock.change)) (\(String(format: "%.3f", stock.percentChange))%)")
                             .font(.system(size: 20, weight: .regular, design: .monospaced))
                             .foregroundColor(stock.change > 0 ? .green : .red)
                     }
-                    
-                    //Spacer()
-                    
+
                     VStack(spacing: 12) {
                         if viewModel.isLoadingChart {
                             ProgressView("Loading chart...")
@@ -84,7 +80,7 @@ struct DetailedStockView: View {
                                 range: selectedTimeRange.chartRange
                             )
                         }
-                        
+
                         Picker("Time Range", selection: $selectedTimeRange) {
                             ForEach(TimeRange.allCases, id: \.self) { range in
                                 Text(range.rawValue).tag(range)
@@ -92,12 +88,9 @@ struct DetailedStockView: View {
                         }
                         .pickerStyle(.segmented)
                     }
-//                    .padding(.horizontal)
-//                    .padding(.top, 4)
-                    
-                    Divider()
-                        .padding(.top, 8)
-                    
+                    .padding(.horizontal)
+                    .padding(.top, 4)
+
                     VStack(spacing: 8) {
                         HStack {
                             Text("Open")
@@ -106,9 +99,9 @@ struct DetailedStockView: View {
                             Text("$\(String(format: "%.2f", stock.open))")
                                 .font(.system(size: 24, design: .monospaced))
                         }
-                        
+
                         Divider()
-                        
+
                         HStack {
                             Text("High")
                                 .font(.system(size: 24, design: .monospaced))
@@ -116,9 +109,9 @@ struct DetailedStockView: View {
                             Text("$\(String(format: "%.2f", stock.high))")
                                 .font(.system(size: 24, design: .monospaced))
                         }
-                        
+
                         Divider()
-                        
+
                         HStack {
                             Text("Low")
                                 .font(.system(size: 24, design: .monospaced))
@@ -127,8 +120,8 @@ struct DetailedStockView: View {
                                 .font(.system(size: 24, design: .monospaced))
                         }
                     }
-                    
-                    Spacer()
+
+                    Spacer(minLength: 8)
                 }
                 .padding()
                 .onAppear {
@@ -139,7 +132,7 @@ struct DetailedStockView: View {
                         loadChartData(for: s)
                     }
                 }
-                
+
             } else {
                 Text("No stock selected")
                     .font(.system(size: 24, design: .monospaced))
@@ -147,24 +140,24 @@ struct DetailedStockView: View {
             }
         }
     }
-    
+
     private func loadChartData(for stock: StockItem) {
         let interval = selectedTimeRange.interval
         let size = selectedTimeRange.outputSize
-        
+
         Task {
             await MainActor.run {
                 viewModel.isLoadingChart = true
                 viewModel.chartError = nil
             }
-            
+
             do {
                 let points = try await ChartStockAPI.shared.fetchTimeSeries(
                     symbol: stock.code,
                     interval: interval,
                     outputSize: size
                 )
-                
+
                 await MainActor.run {
                     viewModel.chartData = points
                     viewModel.isLoadingChart = false
@@ -180,8 +173,9 @@ struct DetailedStockView: View {
     }
 }
 
+
 extension DetailedStockView.TimeRange {
-    
+
     var interval: String {
         switch self {
         case .oneDay:
@@ -196,7 +190,7 @@ extension DetailedStockView.TimeRange {
             return "1week"
         }
     }
-    
+
     var outputSize: Int {
         switch self {
         case .oneDay:
@@ -211,7 +205,7 @@ extension DetailedStockView.TimeRange {
             return 52
         }
     }
-    
+
     var chartRange: ChartTimeRange {
         switch self {
         case .oneDay:
