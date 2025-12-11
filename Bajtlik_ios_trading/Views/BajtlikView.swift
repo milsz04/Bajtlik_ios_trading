@@ -6,10 +6,8 @@ struct BajtlikView: View {
     @Environment(\.modelContext) private var context
 
     @Query(sort: \StockItem.code) private var stocks: [StockItem]
-
-    @State private var bajtlikVal = 12400.02
-    @State private var balance = 1100.09
-    @State private var shares = 1
+    
+    @StateObject private var viewModel = BajtlikViewModel()
     
     var body: some View {
         ZStack {
@@ -24,7 +22,7 @@ struct BajtlikView: View {
                 Text("Value")
                     .font(.system(size: 40, design: .monospaced))
 
-                Text("\(bajtlikVal, format: .currency(code: "USD"))")
+                Text("\(viewModel.bajtlikVal, format: .currency(code: "USD"))")
                     .font(.system(size: 30, design: .monospaced))
 
                 Text("Available")

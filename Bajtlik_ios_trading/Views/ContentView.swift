@@ -4,10 +4,12 @@ struct ContentView: View {
     @EnvironmentObject var stockManager: StockManager
     @State private var showSearch = false
     @State private var searchText = ""
-    @SceneStorage("selectedTab") private var selectedTabIndex = 0
+    
+    
+    let viewModel = BajtlikViewModel()
 
     var body: some View {
-        TabView(selection: $selectedTabIndex) {
+        TabView {
             NavigationStack {
                 WatchlistView()
                     .environmentObject(stockManager)

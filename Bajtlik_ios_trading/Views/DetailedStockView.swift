@@ -2,11 +2,9 @@ import SwiftUI
 
 struct DetailedStockView: View {
     @EnvironmentObject var stockManager: StockManager
-    
     @State private var selectedTimeRange: TimeRange = .oneDay
-    @State private var chartData: [PricePoint] = []
-    @State private var isLoadingChart = false
-    @State private var chartError: String?
+    
+    @StateObject private var viewModel = DetailedStockViewModel()
     
     enum TimeRange: String, CaseIterable {
         case oneDay      = "1D"
@@ -66,22 +64,22 @@ struct DetailedStockView: View {
                     //Spacer()
                     
                     VStack(spacing: 12) {
-                        if isLoadingChart {
+                        if viewModel.isLoadingChart {
                             ProgressView("Loading chart...")
                                 .padding()
-                        } else if let chartError = chartError {
+                        } else if let chartError = viewModel.chartError {
                             Text(chartError)
                                 .font(.footnote)
                                 .foregroundColor(.red)
                                 .padding(.horizontal)
-                        } else if chartData.isEmpty {
+                        } else if viewModel.chartData.isEmpty {
                             Text("No chart data available.")
                                 .font(.footnote)
                                 .foregroundColor(.gray)
                                 .padding(.horizontal)
                         } else {
                             StockLineChart(
-                                data: chartData,
+                                data: viewModel.chartData,
                                 isPositive: stock.change >= 0,
                                 range: selectedTimeRange.chartRange
                             )
@@ -156,8 +154,8 @@ struct DetailedStockView: View {
         
         Task {
             await MainActor.run {
-                isLoadingChart = true
-                chartError = nil
+                viewModel.isLoadingChart = true
+                viewModel.chartError = nil
             }
             
             do {
@@ -168,14 +166,14 @@ struct DetailedStockView: View {
                 )
                 
                 await MainActor.run {
-                    chartData = points
-                    isLoadingChart = false
+                    viewModel.chartData = points
+                    viewModel.isLoadingChart = false
                 }
             } catch {
                 await MainActor.run {
-                    chartError = error.localizedDescription
-                    chartData = []
-                    isLoadingChart = false
+                    viewModel.chartError = error.localizedDescription
+                    viewModel.chartData = []
+                    viewModel.isLoadingChart = false
                 }
             }
         }

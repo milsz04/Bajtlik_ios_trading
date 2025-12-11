@@ -1,8 +1,6 @@
 import Foundation
 import SwiftUI
 
-// --- Data Models ---
-
 struct StockSearchResult: Identifiable, Codable {
     var id: String { symbol ?? UUID().uuidString }
     var symbol: String?

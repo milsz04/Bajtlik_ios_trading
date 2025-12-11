@@ -7,22 +7,13 @@ struct WatchlistView: View {
     @Query(sort: \StockItem.code) private var stocks: [StockItem]
 
     @StateObject private var fetcher = StockFetcher()
-    @State private var showSearchField = false
-    @State private var stockSymbol = ""
-
-    @State private var showSearchBar = false
-    @State private var searchText = ""
 
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
+    
+    @StateObject private var viewModel = WatchlistViewModel()
 
-    private var filteredStocks: [StockItem] {
-        guard !searchText.isEmpty else { return stocks }
-        return stocks.filter { item in
-            item.name.lowercased().contains(searchText.lowercased()) ||
-            item.code.lowercased().contains(searchText.lowercased())
-        }
-    }
-
+    @State private var selectedStockForDetails: StockItem?
+    
     var body: some View {
         ZStack {
             Color(.systemGray6)
@@ -40,9 +31,9 @@ struct WatchlistView: View {
 
                     Button {
                         withAnimation(.easeInOut) {
-                            showSearchBar.toggle()
-                            if !showSearchBar {
-                                searchText = ""
+                            viewModel.showSearchBar.toggle()
+                            if !viewModel.showSearchBar {
+                                viewModel.searchText = ""
                             }
                         }
                     } label: {
@@ -55,33 +46,33 @@ struct WatchlistView: View {
                     }
 
                     Button(action: {
-                        showSearchField = true
+                        viewModel.showSearchField = true
                     }) {
                         Label("", systemImage: "plus.circle.fill")
                             .font(.system(size: 40, weight: .semibold))
                             .foregroundColor(Color.primary)
                             .padding(.horizontal, 10)
                     }
-                    .alert("Add Stock Symbol", isPresented: $showSearchField) {
-                        TextField("Enter symbol (e.g. AAPL)", text: $stockSymbol)
+                    .alert("Add Stock Symbol", isPresented: $viewModel.showSearchField) {
+                        TextField("Enter symbol (e.g. AAPL)", text: $viewModel.stockSymbol)
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled(true)
                         Button("Add") {
                             Task {
-                                await stockManager.addStock(query: stockSymbol, in: context)
-                                stockSymbol = ""
+                                await stockManager.addStock(query: viewModel.stockSymbol, in: context)
+                                viewModel.stockSymbol = ""
                             }
                         }
                         Button("Cancel", role: .cancel) {
-                            stockSymbol = ""
+                            viewModel.stockSymbol = ""
                         }
                     } message: {
                         Text("Type the stock symbol you want to add to your watchlist.")
                     }
                 }
 
-                if showSearchBar {
-                    TextField("Search saved stocks…", text: $searchText)
+                if viewModel.showSearchBar {
+                    TextField("Search saved stocks…", text: $viewModel.searchText)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled(true)
                         .padding(10)
@@ -93,7 +84,7 @@ struct WatchlistView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
-                        ForEach(filteredStocks) { item in
+                        ForEach(viewModel.filteredStocks(from: stocks)) { item in
                             SwipeToDeleteRow {
                                 NavigationLink(
                                     destination: DetailedStockView()
