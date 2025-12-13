@@ -37,7 +37,7 @@ struct BajtlikView: View {
                             NavigationLink(
                                 destination: DetailedStockView()
                                     .environmentObject(stockManager)
-                                    .onAppear { stockManager.selectedStock = item }
+                                    .onAppear { stockManager.select(stock: item) }
                             ) {
                                 StockCardBajtlik(item: item)
                             }

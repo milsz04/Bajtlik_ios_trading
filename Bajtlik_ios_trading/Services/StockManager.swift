@@ -47,6 +47,11 @@ final class StockItem {
 final class StockManager: ObservableObject {
     @Published var selectedStock: StockItem? = nil
     @Published var balance: Double = 10000.00
+    @Published var selectedStockCode: String? = nil
+    @Published var selectedStockPrice: Double? = nil
+    @Published var selectedSymbol: String? = nil
+    @Published var selectedName: String? = nil
+
 
     init() {}
 
@@ -134,4 +139,60 @@ final class StockManager: ObservableObject {
         balance -= totalCost
         return true
     }
+    func addWatchlistStock(query: String, in context: ModelContext) async {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+
+        do {
+            let results = try await SwiftStockAPI.shared.searchStocks(matching: trimmed)
+            let bestMatch = results.first(where: { ($0.type ?? "") == "Common Stock" }) ?? results.first
+            guard let match = bestMatch else { return }
+
+            let symbol = match.symbol ?? match.displaySymbol ?? trimmed.uppercased()
+
+            // prevent duplicates in watchlist
+            let existing = try context.fetch(
+                FetchDescriptor<WatchlistItem>(predicate: #Predicate { $0.code == symbol })
+            ).first
+            if existing != nil { return }
+
+            let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
+            let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
+
+            let newItem = WatchlistItem(
+                name: name,
+                code: symbol,
+                current: quote.current,
+                change: quote.change,
+                percentChange: quote.percentChange,
+                high: quote.high,
+                low: quote.low,
+                open: quote.open,
+                previousClose: quote.previousClose
+            )
+
+            context.insert(newItem)
+            try context.save()
+        } catch {
+            print("Error adding watchlist stock:", error)
+        }
+    }
+    func removeWatchlistStock(_ stock: WatchlistItem, in context: ModelContext) {
+        context.delete(stock)
+        do { try context.save() }
+        catch { print("Failed to remove watchlist stock:", error) }
+    }
+    func select(stock: StockItem) {
+        selectedStock = stock
+        selectedSymbol = stock.code
+        selectedName = stock.name
+    }
+
+    func select(watchlist: WatchlistItem) {
+        selectedStock = nil                 // important: don’t point to portfolio model
+        selectedSymbol = watchlist.code
+        selectedName = watchlist.name
+    }
+
+
 }

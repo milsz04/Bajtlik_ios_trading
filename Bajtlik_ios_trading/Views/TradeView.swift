@@ -143,10 +143,16 @@ struct TradeView: View {
         .navigationBarHidden(false)
         .onAppear {
             if let stock = stockManager.selectedStock {
-                stockPrice = stock.current
                 stockCode = stock.code
+                stockPrice = stock.current
+            }else {
+                stockCode = stockManager.selectedSymbol ?? stockManager.selectedStockCode ?? stockCode
+                if let price = stockManager.selectedStockPrice {
+                    stockPrice = price
+                }
             }
         }
+
         .alert("Insufficient Funds", isPresented: $showInsufficientFundsAlert) {
             Button("OK", role: .cancel) {}
         } message: {

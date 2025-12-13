@@ -4,12 +4,14 @@ import SwiftData
 struct WatchlistView: View {
     @EnvironmentObject var stockManager: StockManager
     @Environment(\.modelContext) private var context
-    @Query(sort: \StockItem.code) private var stocks: [StockItem]
+    @Query(sort: \WatchlistItem.code)
+    private var stocks: [WatchlistItem]
 
     @StateObject private var fetcher = StockFetcher()
     @AppStorage("isDarkMode") private var isDarkMode: Bool = false
     @StateObject private var viewModel = WatchlistViewModel()
-    @State private var selectedStockForDetails: StockItem?
+    @State private var selectedStockForDetails: WatchlistItem?
+
 
     var body: some View {
         ZStack {
@@ -56,7 +58,7 @@ struct WatchlistView: View {
                             .autocorrectionDisabled(true)
                         Button("Add") {
                             Task {
-                                await stockManager.addStock(query: viewModel.stockSymbol, in: context)
+                                await stockManager.addWatchlistStock(query: viewModel.stockSymbol, in: context)
                                 viewModel.stockSymbol = ""
                             }
                         }
@@ -80,16 +82,20 @@ struct WatchlistView: View {
                 }
                 List {
                     ForEach(viewModel.filteredStocks(from: stocks)) { item in
-                        StockCardBajtlik(item: item)
+                        StockCardWatchlist(item: item)
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 selectedStockForDetails = item
-                                stockManager.selectedStock = item
+                                stockManager.selectedStock = nil
+                                stockManager.selectedSymbol = item.code
+                                stockManager.selectedName = item.name
+                                stockManager.selectedStockPrice = item.current
                             }
+
                             .padding(.vertical, 8)
                             .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                                 Button(role: .destructive) {
-                                    stockManager.removeStock(item, in: context)
+                                    stockManager.removeWatchlistStock(item, in: context)
                                 } label: {
                                     ZStack {
                                         Circle()
@@ -112,8 +118,15 @@ struct WatchlistView: View {
                 .navigationDestination(item: $selectedStockForDetails) { item in
                     DetailedStockView()
                         .environmentObject(stockManager)
-                        .onAppear { stockManager.selectedStock = item }
+                        .onAppear {
+                            // select fallback info for DetailedStockView
+                            stockManager.selectedStock = nil
+                            stockManager.selectedSymbol = item.code
+                            stockManager.selectedName = item.name
+                            stockManager.selectedStockPrice = item.current
+                        }
                 }
+
             }
         }
     }
