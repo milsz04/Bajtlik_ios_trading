@@ -1,18 +1,28 @@
 import SwiftUI
+import SwiftData
 
 struct TradeView: View {
     @EnvironmentObject var stockManager: StockManager
     @Environment(\.modelContext) private var context
+
+    @Query(sort: \WatchlistItem.code)
+    private var watchlistStocks: [WatchlistItem]
 
     @State private var tradeType = "Sell"
     @State private var orderType = "Market"
     @State private var shares: Double = 1.00
     @State private var stockPrice: Double = 150.2
     @State private var stockCode = "firmaA"
-    
+    @State private var selectedSymbolInPicker: String = ""
+
     @State private var showInsufficientFundsAlert = false
     @State private var showSuccessAlert = false
     @State private var showInsufficientSharesAlert = false
+    @State private var showLimitAlert = false
+    @State private var limitText = ""
+    @State private var showLimitFailedAlert = false
+    @FocusState private var sharesFieldFocused: Bool
+
     var estimatedCost: Double {
         shares * stockPrice
     }
@@ -30,28 +40,44 @@ struct TradeView: View {
     private var isSharesValid: Bool {
         shares >= 0.01
     }
+    private var activeSymbol: String {
+        stockManager.selectedStock?.code
+        ?? (selectedSymbolInPicker.isEmpty ? nil : selectedSymbolInPicker)
+        ?? stockManager.selectedSymbol
+        ?? stockManager.selectedStockCode
+        ?? stockCode
+    }
 
     var body: some View {
         ZStack {
             Color(.systemGray6)
                 .ignoresSafeArea()
-            
+
             VStack(alignment: .leading, spacing: 24) {
-                
-                // HEADER
+
                 HStack {
                     Text("Trade")
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
                         .foregroundColor(.primary)
-                    
+
                     Spacer()
-                    
-                    Text(stockCode)
+
+                    if watchlistStocks.isEmpty {
+                        Text(stockCode)
+                            .font(.system(size: 40, weight: .bold, design: .monospaced))
+                            .foregroundColor(.primary)
+                    } else {
+                        Picker("", selection: $selectedSymbolInPicker) {
+                            ForEach(watchlistStocks, id: \.code) { item in
+                                Text(item.code).tag(item.code)
+                            }
+                        }
+                        .pickerStyle(.menu)
                         .font(.system(size: 40, weight: .bold, design: .monospaced))
                         .foregroundColor(.primary)
+                    }
                 }
                 
-                // TRADE TYPE PICKER
                 Picker("Trade Type", selection: $tradeType) {
                     Text("Sell").tag("Sell")
                     Text("Buy").tag("Buy")
@@ -60,8 +86,6 @@ struct TradeView: View {
                 .scaleEffect(2)
                 .frame(height: 40)
                 .padding(.horizontal, 100)
-                
-                // ORDER TYPE PICKER
                 Picker("Order Type", selection: $orderType) {
                     Text("Market").tag("Market")
                     Text("Limit").tag("Limit")
@@ -70,11 +94,10 @@ struct TradeView: View {
                 .scaleEffect(2)
                 .frame(height: 60)
                 .padding(.horizontal, 100)
-                
+
                 Divider()
                     .padding(.vertical, 10)
-                
-                // PRICE SECTION
+
                 HStack {
                     Text("Price per share")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
@@ -82,20 +105,30 @@ struct TradeView: View {
                     Text(String(format: "$%.2f", stockPrice))
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                 }
-                
+
                 HStack {
                     Text("Shares")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                     Spacer()
-                    
+
                     TextField("", value: $shares, formatter: Self.sharesFormatter)
                         .keyboardType(.decimalPad)
                         .multilineTextAlignment(.trailing)
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .frame(width: 100)
                         .textFieldStyle(.roundedBorder)
+                        .focused($sharesFieldFocused)   // 👈 focus binding
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    sharesFieldFocused = false   // 👈 hides keyboard
+                                }
+                            }
+                        }
+
                 }
-                
+
                 HStack {
                     Text("Estimated cost")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
@@ -103,7 +136,7 @@ struct TradeView: View {
                     Text(String(format: "$%.2f", estimatedCost))
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                 }
-                
+
                 HStack {
                     Text("Available")
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
@@ -113,17 +146,19 @@ struct TradeView: View {
                 }
 
                 Spacer()
-                
-                // PLACE ORDER BUTTON
+
                 Button(action: {
                     print("\(tradeType) \(shares) shares with \(orderType) order at \(stockPrice)$ each")
-                    let symbol = stockManager.selectedStock?.code
-                        ?? stockManager.selectedSymbol
-                        ?? stockManager.selectedStockCode
-                        ?? stockCode
-                    if tradeType == "Buy" {
-                      
 
+                    let symbol = activeSymbol
+
+                    if orderType == "Limit" {
+                        limitText = String(format: "%.2f", stockPrice) 
+                        showLimitAlert = true
+                        return
+                    }
+
+                    if tradeType == "Buy" {
                         Task {
                             let success = await stockManager.buyStock(
                                 symbol: symbol,
@@ -138,7 +173,7 @@ struct TradeView: View {
                                 showInsufficientFundsAlert = true
                             }
                         }
-                    }else { // Sell
+                    } else { // Sell
                         let success = stockManager.sellStock(
                             symbol: symbol,
                             in: context,
@@ -161,21 +196,60 @@ struct TradeView: View {
                         .foregroundColor(.primary)
                 }
                 .buttonStyle(.glass)
+                .disabled(!isSharesValid || activeSymbol.isEmpty)
             }
             .padding(.horizontal, 20)
             .padding(.top, 20)
             .padding(.bottom, 30)
         }
         .navigationBarHidden(false)
+
         .onAppear {
             if let stock = stockManager.selectedStock {
                 stockCode = stock.code
                 stockPrice = stock.current
-            }else {
-                stockCode = stockManager.selectedSymbol ?? stockManager.selectedStockCode ?? stockCode
+                selectedSymbolInPicker = stock.code
+                return
+            }
+
+            if let sym = stockManager.selectedSymbol ?? stockManager.selectedStockCode, !sym.isEmpty {
+                stockCode = sym
+                selectedSymbolInPicker = sym
                 if let price = stockManager.selectedStockPrice {
                     stockPrice = price
                 }
+            } else if let first = watchlistStocks.first {
+                stockCode = first.code
+                stockPrice = first.current
+                selectedSymbolInPicker = first.code
+
+                stockManager.selectedStock = nil
+                stockManager.selectedSymbol = first.code
+                stockManager.selectedName = first.name
+                stockManager.selectedStockCode = first.code
+                stockManager.selectedStockPrice = first.current
+            }
+        }
+        .onTapGesture {
+            sharesFieldFocused = false
+        }
+
+        .onChange(of: selectedSymbolInPicker) { _, newSymbol in
+            guard !newSymbol.isEmpty else { return }
+            stockCode = newSymbol
+
+            if let w = watchlistStocks.first(where: { $0.code == newSymbol }) {
+                stockPrice = w.current
+
+                stockManager.selectedStock = nil
+                stockManager.selectedSymbol = w.code
+                stockManager.selectedName = w.name
+                stockManager.selectedStockCode = w.code
+                stockManager.selectedStockPrice = w.current
+            } else {
+                stockManager.selectedSymbol = newSymbol
+                stockManager.selectedStockCode = newSymbol
+                stockManager.selectedStockPrice = stockPrice
             }
         }
 
@@ -194,7 +268,46 @@ struct TradeView: View {
         } message: {
             Text("You don’t have enough shares of this stock to sell that amount.")
         }
+        .alert("Limit Price", isPresented: $showLimitAlert) {
+            TextField("Enter limit price", text: $limitText)
+                .keyboardType(.decimalPad)
 
+            Button("Place Limit Order") {
+                let symbol = activeSymbol
+
+                let name = stockManager.selectedStock?.name
+                    ?? stockManager.selectedName
+                    ?? symbol
+
+                let limitPrice = Double(limitText.replacingOccurrences(of: ",", with: ".")) ?? 0
+
+                let ok = stockManager.placeLimitOrder(
+                    symbol: symbol,
+                    name: name,
+                    side: tradeType,
+                    shares: shares,
+                    limitPrice: limitPrice,
+                    in: context
+                )
+
+                if ok {
+                    showSuccessAlert = true
+                } else {
+                    showLimitFailedAlert = true
+                }
+            }
+
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            Text("Put the value of the stock that you want to \(tradeType.lowercased()) at.")
+        }
+        .alert("Limit Order Failed", isPresented: $showLimitFailedAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(tradeType == "Buy"
+                 ? "Not enough available cash to place this limit buy."
+                 : "Not enough available shares to place this limit sell.")
+        }
     }
 }
 
@@ -202,3 +315,4 @@ struct TradeView: View {
     TradeView()
         .environmentObject(StockManager())
 }
+

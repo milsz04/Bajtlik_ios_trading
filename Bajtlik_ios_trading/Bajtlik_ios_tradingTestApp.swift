@@ -12,6 +12,6 @@ struct Bajtlik_ios_tradingTestApp: App {
                 .environmentObject(stockManager)
                 .preferredColorScheme(isDarkMode ? .dark : .light)
         }
-        .modelContainer(for: [StockItem.self, WatchlistItem.self])
+        .modelContainer(for: [StockItem.self, WatchlistItem.self, LimitOrder.self])
     }
 }

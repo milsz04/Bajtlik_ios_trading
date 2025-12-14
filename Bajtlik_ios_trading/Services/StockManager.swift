@@ -3,6 +3,8 @@ import SwiftUI
 import SwiftData
 import Combine
 
+
+
 @Model
 final class StockItem {
     @Attribute(.unique) var id: UUID
@@ -20,6 +22,7 @@ final class StockItem {
     var sharesOwned: Double
     var avgCost: Double
     var costBasis: Double
+    var reservedShares: Double
     var marketValue: Double { sharesOwned * current }
     var unrealizedPL: Double { marketValue - costBasis }
     var unrealizedPLPercent: Double {
@@ -27,6 +30,9 @@ final class StockItem {
         return (unrealizedPL / costBasis) * 100
     }
 
+    var availableSharesToSell: Double {
+        max(0, sharesOwned - reservedShares)
+    }
 
     init(
         id: UUID = UUID(),
@@ -41,7 +47,8 @@ final class StockItem {
         previousClose: Double,
         sharesOwned: Double = 0.0,
         avgCost: Double = 0.0,
-        costBasis: Double = 0.0
+        costBasis: Double = 0.0,
+        reservedShares: Double = 0.0
     ) {
         self.id = id
         self.name = name
@@ -56,105 +63,51 @@ final class StockItem {
         self.sharesOwned = sharesOwned
         self.avgCost = avgCost
         self.costBasis = costBasis
+        self.reservedShares = reservedShares
     }
 }
+
 
 @MainActor
 final class StockManager: ObservableObject {
     @Published var selectedStock: StockItem? = nil
-    @Published var balance: Double = 10000.00
+
+    private enum PersistKeys {
+        static let balance = "bajtlik.balance"
+        static let reservedCash = "bajtlik.reservedCash"
+    }
+
+    @Published var balance: Double {
+        didSet { UserDefaults.standard.set(balance, forKey: PersistKeys.balance) }
+    }
+
+    @Published var reservedCash: Double {
+        didSet { UserDefaults.standard.set(reservedCash, forKey: PersistKeys.reservedCash) }
+    }
+
+
+    var availableCash: Double {
+        max(0, balance - reservedCash)
+    }
+
     @Published var selectedStockCode: String? = nil
     @Published var selectedStockPrice: Double? = nil
     @Published var selectedSymbol: String? = nil
     @Published var selectedName: String? = nil
 
+    init() {
+        let defaults = UserDefaults.standard
 
-    init() {}
+        let savedBalance = defaults.object(forKey: PersistKeys.balance) as? Double
+        let savedReserved = defaults.object(forKey: PersistKeys.reservedCash) as? Double
 
-    func addStock(query: String, in context: ModelContext) async {
-        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-
-        do {
-            // Assume SwiftStockAPI is defined elsewhere and handles fetching/decoding
-            let results = try await SwiftStockAPI.shared.searchStocks(matching: trimmed)
-
-            let bestMatch = results.first(where: { ($0.type ?? "") == "Common Stock" }) ?? results.first
-
-            guard let match = bestMatch else {
-                print("No search results for: \(trimmed)")
-                return
-            }
-
-            let symbol = match.symbol ?? match.displaySymbol ?? trimmed.uppercased()
-
-            let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
-            let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
-
-            let newStock = StockItem(
-                name: name,
-                code: symbol,
-                current: quote.current,
-                change: quote.change,
-                percentChange: quote.percentChange,
-                high: quote.high,
-                low: quote.low,
-                open: quote.open,
-                previousClose: quote.previousClose
-            )
-
-            context.insert(newStock)
-            try context.save()
-            print("Added \(symbol) (\(trimmed)). Current price: \(quote.current)")
-        } catch {
-            print("Error adding stock for query '\(trimmed)':", error)
-        }
+        self.balance = savedBalance ?? 10000.00
+        self.reservedCash = savedReserved ?? 0.0
     }
 
-    func removeStock(_ stock: StockItem, in context: ModelContext) {
-        context.delete(stock)
-        do {
-            try context.save()
-        } catch {
-            print("Failed to remove stock:", error)
-        }
-    }
 
-    func refreshAllStocks(stocks: [StockItem], in context: ModelContext) async {
-        for stock in stocks {
-            do {
-                // Assume SwiftStockAPI is defined elsewhere and handles fetching/decoding
-                let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
+    // MARK: - Watchlist
 
-                stock.current = quote.current
-                stock.change = quote.change
-                stock.percentChange = quote.percentChange
-                stock.high = quote.high
-                stock.low = quote.low
-                stock.open = quote.open
-                stock.previousClose = quote.previousClose
-
-            } catch {
-                print("Failed to refresh \(stock.code):", error)
-            }
-        }
-
-        do {
-            try context.save()
-            print("All stocks refreshed.")
-        } catch {
-            print("Failed to save refreshed stocks:", error)
-        }
-    }
-
-    func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
-        let totalCost = shares * pricePerShare
-        guard totalCost <= balance else {
-            return false
-        }
-        balance -= totalCost
-        return true
-    }
     func addWatchlistStock(query: String, in context: ModelContext) async {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
@@ -166,9 +119,10 @@ final class StockManager: ObservableObject {
 
             let symbol = match.symbol ?? match.displaySymbol ?? trimmed.uppercased()
 
-            // prevent duplicates in watchlist
             let existing = try context.fetch(
-                FetchDescriptor<WatchlistItem>(predicate: #Predicate { $0.code == symbol })
+                FetchDescriptor<WatchlistItem>(
+                    predicate: #Predicate<WatchlistItem> { item in item.code == symbol }
+                )
             ).first
             if existing != nil { return }
 
@@ -193,49 +147,88 @@ final class StockManager: ObservableObject {
             print("Error adding watchlist stock:", error)
         }
     }
+
     func removeWatchlistStock(_ stock: WatchlistItem, in context: ModelContext) {
         context.delete(stock)
         do { try context.save() }
         catch { print("Failed to remove watchlist stock:", error) }
     }
+
+    // MARK: - Selection helpers
+
     func select(stock: StockItem) {
         selectedStock = stock
         selectedSymbol = stock.code
         selectedName = stock.name
+        selectedStockCode = stock.code
+        selectedStockPrice = stock.current
     }
 
     func select(watchlist: WatchlistItem) {
-        selectedStock = nil                 // important: don’t point to portfolio model
+        selectedStock = nil
         selectedSymbol = watchlist.code
         selectedName = watchlist.name
+        selectedStockCode = watchlist.code
+        selectedStockPrice = watchlist.current
     }
-    @MainActor
+
+    // MARK: - Portfolio refresh
+
+    func refreshAllStocks(stocks: [StockItem], in context: ModelContext) async {
+        for stock in stocks {
+            do {
+                let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
+
+                stock.current = quote.current
+                stock.change = quote.change
+                stock.percentChange = quote.percentChange
+                stock.high = quote.high
+                stock.low = quote.low
+                stock.open = quote.open
+                stock.previousClose = quote.previousClose
+            } catch {
+                print("Failed to refresh \(stock.code):", error)
+            }
+        }
+
+        do {
+            try context.save()
+            print("All stocks refreshed.")
+        } catch {
+            print("Failed to save refreshed stocks:", error)
+        }
+        await processLimitOrders(in: context)
+    }
+
+    // MARK: - Market BUY / SELL
+
+    func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
+        let totalCost = shares * pricePerShare
+        guard totalCost <= balance else { return false }
+        balance -= totalCost
+        return true
+    }
+
     func buyStock(symbol: String, in context: ModelContext, shares: Double, executionPrice: Double) async -> Bool {
         guard shares >= 0.01 else { return false }
         let totalCost = shares * executionPrice
         guard totalCost <= balance else { return false }
 
         do {
-            // Find existing position
             let existing = try context.fetch(
                 FetchDescriptor<StockItem>(
-                    predicate: #Predicate<StockItem> { $0.code == symbol }
+                    predicate: #Predicate<StockItem> { item in item.code == symbol }
                 )
             ).first
 
             if let pos = existing {
-                // Update cost basis + avg cost
                 let newCostBasis = pos.costBasis + totalCost
                 let newShares = pos.sharesOwned + shares
                 pos.sharesOwned = newShares
                 pos.costBasis = newCostBasis
                 pos.avgCost = newShares > 0 ? (newCostBasis / newShares) : 0
-
-                // Update last price snapshot too (nice to keep UI consistent immediately)
                 pos.current = executionPrice
             } else {
-                // Create new position (fetch quote/name if you want; here we use what we have)
-                // Ideally: pass name & quote in, or fetch here.
                 let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
                 let name = try await SwiftStockAPI.shared.fetchCompanyName(for: symbol)
 
@@ -251,12 +244,12 @@ final class StockManager: ObservableObject {
                     previousClose: quote.previousClose,
                     sharesOwned: shares,
                     avgCost: executionPrice,
-                    costBasis: totalCost
+                    costBasis: totalCost,
+                    reservedShares: 0
                 )
                 context.insert(newPos)
             }
 
-            // Deduct balance after successful update
             balance -= totalCost
             try context.save()
             return true
@@ -265,6 +258,7 @@ final class StockManager: ObservableObject {
             return false
         }
     }
+
     func sellStock(symbol: String, in context: ModelContext, shares: Double, executionPrice: Double) -> Bool {
         guard shares >= 0.01 else { return false }
         guard executionPrice > 0 else { return false }
@@ -272,25 +266,16 @@ final class StockManager: ObservableObject {
         do {
             let existing = try context.fetch(
                 FetchDescriptor<StockItem>(
-                    predicate: #Predicate<StockItem> { $0.code == symbol }
+                    predicate: #Predicate<StockItem> { item in item.code == symbol }
                 )
             ).first
 
-            guard let pos = existing else {
-                // You don't own it (no position)
-                return false
-            }
+            guard let pos = existing else { return false }
+            guard pos.sharesOwned >= shares else { return false }
 
-            // Check you have enough shares
-            guard pos.sharesOwned >= shares else {
-                return false
-            }
-
-            // Add proceeds to available money (includes profit if any)
             let proceeds = shares * executionPrice
             balance += proceeds
 
-            // Reduce position cost basis proportionally by avg cost
             let costRemoved = shares * pos.avgCost
             pos.costBasis = max(0, pos.costBasis - costRemoved)
             pos.sharesOwned = max(0, pos.sharesOwned - shares)
@@ -300,14 +285,11 @@ final class StockManager: ObservableObject {
             } else {
                 pos.avgCost = 0
                 pos.costBasis = 0
-
-                // Optional: remove position completely when empty
+                pos.reservedShares = 0
                 context.delete(pos)
             }
 
-            // Optional: keep last trade price visible immediately
             pos.current = executionPrice
-
             try context.save()
             return true
         } catch {
@@ -316,5 +298,179 @@ final class StockManager: ObservableObject {
         }
     }
 
+    // MARK: - Limit Orders
+
+    func placeLimitOrder(
+        symbol: String,
+        name: String,
+        side: String,
+        shares: Double,
+        limitPrice: Double,
+        in context: ModelContext
+    ) -> Bool {
+        guard shares >= 0.01 else { return false }
+        guard limitPrice > 0 else { return false }
+        guard side == "Buy" || side == "Sell" else { return false }
+
+        if side == "Buy" {
+            let required = shares * limitPrice
+            guard availableCash >= required else { return false }
+
+            reservedCash += required
+
+            let order = LimitOrder(
+                symbol: symbol,
+                name: name,
+                side: "Buy",
+                shares: shares,
+                limitPrice: limitPrice
+            )
+            context.insert(order)
+            do { try context.save(); return true }
+            catch {
+                reservedCash = max(0, reservedCash - required)
+                return false
+            }
+        } else {
+            do {
+                let pos = try context.fetch(
+                    FetchDescriptor<StockItem>(
+                        predicate: #Predicate<StockItem> { item in
+                            item.code == symbol
+                        }
+                    )
+                ).first
+                
+                guard let pos else { return false }
+                guard pos.availableSharesToSell >= shares else { return false }
+                
+                pos.reservedShares += shares
+                
+                let order = LimitOrder(
+                    symbol: symbol,
+                    name: name,
+                    side: "Sell",
+                    shares: shares,
+                    limitPrice: limitPrice
+                )
+                context.insert(order)
+                
+                do {
+                    try context.save()
+                    return true
+                } catch {
+                    pos.reservedShares = max(0, pos.reservedShares - shares)
+                    return false
+                }
+            } catch {
+                return false
+            }
+        }
+    }
+    func cancelLimitOrder(_ order: LimitOrder, in context: ModelContext) {
+        if order.side == "Buy" {
+            let reserved = order.shares * order.limitPrice
+            reservedCash = max(0, reservedCash - reserved)
+            context.delete(order)
+            do { try context.save() } catch {}
+            return
+        }
+        do {
+            let symbol = order.symbol
+
+            if let pos = try context.fetch(
+                FetchDescriptor<StockItem>(
+                    predicate: #Predicate<StockItem> { item in
+                        item.code == symbol
+                    }
+                )
+            ).first {
+                pos.reservedShares = max(0, pos.reservedShares - order.shares)
+            }
+
+            context.delete(order)
+            try context.save()
+        } catch {}
+    }
+
+    func processLimitOrders(in context: ModelContext) async {
+        do {
+            let orders = try context.fetch(
+                FetchDescriptor<LimitOrder>(sortBy: [SortDescriptor(\LimitOrder.createdAt)])
+            )
+
+            for order in orders {
+                let symbol = order.symbol
+
+                let quote = try await SwiftStockAPI.shared.fetchQuote(for: symbol)
+                let current = quote.current
+
+                if order.side == "Buy" {
+                    guard current <= order.limitPrice else { continue }
+
+                    let reserved = order.shares * order.limitPrice
+                    reservedCash = max(0, reservedCash - reserved)
+
+                    let ok = await buyStock(
+                        symbol: symbol,
+                        in: context,
+                        shares: order.shares,
+                        executionPrice: current
+                    )
+
+                    if ok {
+                        context.delete(order)
+                    } else {
+                        reservedCash += reserved
+                    }
+
+                } else { 
+                    guard current >= order.limitPrice else { continue }
+
+                    if let pos = try context.fetch(
+                        FetchDescriptor<StockItem>(
+                            predicate: #Predicate<StockItem> { item in
+                                item.code == symbol
+                            }
+                        )
+                    ).first {
+                        pos.reservedShares = max(0, pos.reservedShares - order.shares)
+                    }
+
+                    let ok = sellStock(
+                        symbol: symbol,
+                        in: context,
+                        shares: order.shares,
+                        executionPrice: current
+                    )
+
+                    if ok {
+                        context.delete(order)
+                    } else {
+                        if let pos = try context.fetch(
+                            FetchDescriptor<StockItem>(
+                                predicate: #Predicate<StockItem> { item in
+                                    item.code == symbol
+                                }
+                            )
+                        ).first {
+                            pos.reservedShares += order.shares
+                        }
+                    }
+                }
+            }
+
+            try context.save()
+        } catch {
+            print("processLimitOrders error:", error)
+        }
+    }
+    @MainActor
+    func resetAccount() {
+        balance = 10000.00
+        reservedCash = 0.0
+    }
+
 
 }
+
