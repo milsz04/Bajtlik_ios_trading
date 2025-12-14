@@ -29,13 +29,14 @@ struct TradeView: View {
 
     private static let sharesFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.locale = .current              // 👈 IMPORTANT
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
         formatter.minimum = 0.01
         return formatter
     }()
+
 
     private var isSharesValid: Bool {
         shares >= 0.01
