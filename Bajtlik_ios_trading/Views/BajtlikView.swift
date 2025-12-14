@@ -5,7 +5,8 @@ struct BajtlikView: View {
     @EnvironmentObject var stockManager: StockManager
     @Environment(\.modelContext) private var context
 
-    @Query(sort: \StockItem.code) private var stocks: [StockItem]
+    @Query(filter: #Predicate<StockItem> { $0.sharesOwned > 0 }, sort: \StockItem.code)
+    private var stocks: [StockItem]
     
     @StateObject private var viewModel = BajtlikViewModel()
     

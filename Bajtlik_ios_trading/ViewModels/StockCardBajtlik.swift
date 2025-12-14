@@ -17,12 +17,19 @@ struct StockCardBajtlik: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 6) {
-                Text("$" + String(format: "%.2f", item.current))
-                    .font(.system(size: 20, weight: .semibold, design: .monospaced))
-                    .foregroundColor(.primary)
-                Text("\(item.change > 0 ? "+" : "")\(String(item.change))%")
-                    .font(.system(size: 14, weight: .regular, design: .monospaced))
-                    .foregroundColor(item.change > 0 ? .green : .red)
+                Text("Shares: \(item.sharesOwned, specifier: "%.2f")")
+                    .font(.system(size: 14, design: .monospaced))
+                    .foregroundColor(.secondary)
+
+                Text("Value: $\(item.marketValue, specifier: "%.2f")")
+                    .font(.system(size: 14, design: .monospaced))
+                    .foregroundColor(.secondary)
+
+                let pl = item.unrealizedPL
+                let plPct = item.unrealizedPLPercent
+                Text("P/L: \(pl >= 0 ? "+" : "")$\(pl, specifier: "%.2f") (\(plPct >= 0 ? "+" : "")\(plPct, specifier: "%.2f")%)")
+                    .font(.system(size: 14, design: .monospaced))
+                    .foregroundColor(pl >= 0 ? .green : .red)
             }
         }
         .padding()

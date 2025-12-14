@@ -2,7 +2,8 @@ import SwiftUI
 
 struct TradeView: View {
     @EnvironmentObject var stockManager: StockManager
-    
+    @Environment(\.modelContext) private var context
+
     @State private var tradeType = "Sell"
     @State private var orderType = "Market"
     @State private var shares: Double = 1.00
@@ -11,7 +12,7 @@ struct TradeView: View {
     
     @State private var showInsufficientFundsAlert = false
     @State private var showSuccessAlert = false
-
+    @State private var showInsufficientSharesAlert = false
     var estimatedCost: Double {
         shares * stockPrice
     }
@@ -116,16 +117,41 @@ struct TradeView: View {
                 // PLACE ORDER BUTTON
                 Button(action: {
                     print("\(tradeType) \(shares) shares with \(orderType) order at \(stockPrice)$ each")
-
+                    let symbol = stockManager.selectedStock?.code
+                        ?? stockManager.selectedSymbol
+                        ?? stockManager.selectedStockCode
+                        ?? stockCode
                     if tradeType == "Buy" {
-                        let success = stockManager.tryBuy(shares: shares, pricePerShare: stockPrice)
+                      
 
+                        Task {
+                            let success = await stockManager.buyStock(
+                                symbol: symbol,
+                                in: context,
+                                shares: shares,
+                                executionPrice: stockPrice
+                            )
+
+                            if success {
+                                showSuccessAlert = true
+                            } else {
+                                showInsufficientFundsAlert = true
+                            }
+                        }
+                    }else { // Sell
+                        let success = stockManager.sellStock(
+                            symbol: symbol,
+                            in: context,
+                            shares: shares,
+                            executionPrice: stockPrice
+                        )
                         if success {
                             showSuccessAlert = true
                         } else {
-                            showInsufficientFundsAlert = true
+                            showInsufficientSharesAlert = true
                         }
                     }
+
                 }) {
                     Text("Place order")
                         .font(.system(size: 22, weight: .medium, design: .monospaced))
@@ -163,6 +189,12 @@ struct TradeView: View {
         } message: {
             Text("Your order was successfully completed.")
         }
+        .alert("Not Enough Shares", isPresented: $showInsufficientSharesAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text("You don’t have enough shares of this stock to sell that amount.")
+        }
+
     }
 }
 
