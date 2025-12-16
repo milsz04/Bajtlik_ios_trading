@@ -147,6 +147,25 @@ final class StockManager: ObservableObject {
             print("Error adding watchlist stock:", error)
         }
     }
+    func refreshWatchlistStocks(stocks: [WatchlistItem], in context: ModelContext) async {
+        for stock in stocks {
+            do {
+                let quote = try await SwiftStockAPI.shared.fetchQuote(for: stock.code)
+                stock.current = quote.current
+                stock.change = quote.change
+                stock.percentChange = quote.percentChange
+                stock.high = quote.high
+                stock.low = quote.low
+                stock.open = quote.open
+                stock.previousClose = quote.previousClose
+            } catch {
+                print("Failed to refresh watchlist \(stock.code):", error)
+            }
+        }
+
+        do { try context.save() }
+        catch { print("Failed to save refreshed watchlist:", error) }
+    }
 
     func removeWatchlistStock(_ stock: WatchlistItem, in context: ModelContext) {
         context.delete(stock)

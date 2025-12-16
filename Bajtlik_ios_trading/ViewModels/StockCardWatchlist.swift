@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct StockCardWatchlist: View {
-    let item: WatchlistItem
+    @Bindable var item: WatchlistItem
 
     var body: some View {
         HStack {

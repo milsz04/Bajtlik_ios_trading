@@ -119,11 +119,15 @@ struct WatchlistView: View {
                     DetailedStockView()
                         .environmentObject(stockManager)
                         .onAppear {
+                            Task { await stockManager.refreshWatchlistStocks(stocks: stocks, in: context) }
                             // select fallback info for DetailedStockView
                             stockManager.selectedStock = nil
                             stockManager.selectedSymbol = item.code
                             stockManager.selectedName = item.name
                             stockManager.selectedStockPrice = item.current
+                        }
+                        .refreshable {
+                            await stockManager.refreshWatchlistStocks(stocks: stocks, in: context)
                         }
                 }
 

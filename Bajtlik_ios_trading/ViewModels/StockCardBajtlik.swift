@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct StockCardBajtlik: View {
-    let item: StockItem
+    @Bindable var item: StockItem
     
     var body: some View {
         HStack {
