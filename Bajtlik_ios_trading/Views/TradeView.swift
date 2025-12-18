@@ -29,7 +29,7 @@ struct TradeView: View {
 
     private static let sharesFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.locale = .current              // 👈 IMPORTANT
+        formatter.locale = .current
         formatter.numberStyle = .decimal
         formatter.minimumFractionDigits = 2
         formatter.maximumFractionDigits = 2
@@ -118,12 +118,12 @@ struct TradeView: View {
                         .font(.system(size: 20, weight: .medium, design: .monospaced))
                         .frame(width: 100)
                         .textFieldStyle(.roundedBorder)
-                        .focused($sharesFieldFocused)   // 👈 focus binding
+                        .focused($sharesFieldFocused)
                         .toolbar {
                             ToolbarItemGroup(placement: .keyboard) {
                                 Spacer()
                                 Button("Done") {
-                                    sharesFieldFocused = false   // 👈 hides keyboard
+                                    sharesFieldFocused = false
                                 }
                             }
                         }

@@ -168,7 +168,6 @@ struct DetailedStockView: View {
                     .padding(.horizontal)
                     .padding(.top, 4)
 
-                    // ✅ Show Open/High/Low for BOTH portfolio + watchlist (if we have values)
                     if let o = displayOpen, let h = displayHigh, let l = displayLow {
                         VStack(spacing: 8) {
                             HStack {

@@ -37,7 +37,7 @@ struct BajtlikView: View {
                 
                 
                 
-                // ✅ One scroll container for BOTH owned stocks and waiting positions
+                
                 ScrollView {
                     HStack(spacing: 10) {
                         Text("Value")
@@ -76,7 +76,6 @@ struct BajtlikView: View {
                             }
                         }
                         
-                        // WAITING POSITIONS (now scrolls, doesn’t steal screen space)
                         if !limitOrders.isEmpty {
                             Text("Waiting positions")
                                 .font(.system(size: 28, weight: .bold, design: .monospaced))
@@ -122,7 +121,6 @@ struct BajtlikView: View {
             .task {
                 await stockManager.refreshAllStocks(stocks: stocks, in: context)
             }
-                    // ✅ Pull-to-refresh
             .refreshable {
                         await stockManager.refreshAllStocks(stocks: stocks, in: context)
         }

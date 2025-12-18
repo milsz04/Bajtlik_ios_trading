@@ -62,7 +62,7 @@ struct SettingView: View {
 
                     Divider()
 
-                    // 🔴 RESET FUNDS
+        
                     Button {
                         showResetAlert = true
                     } label: {
