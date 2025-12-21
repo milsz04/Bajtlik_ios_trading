@@ -22,6 +22,8 @@ struct TradeView: View {
     @State private var limitText = ""
     @State private var showLimitFailedAlert = false
     @FocusState private var sharesFieldFocused: Bool
+    @State private var logoURL: URL? = nil
+
 
     var estimatedCost: Double {
         shares * stockPrice
@@ -48,6 +50,17 @@ struct TradeView: View {
         ?? stockManager.selectedStockCode
         ?? stockCode
     }
+    private func loadLogo(for symbol: String) {
+        Task {
+            do {
+                let url = try await SwiftStockAPI.shared.fetchCompanyLogoURL(for: symbol)
+                await MainActor.run { self.logoURL = url }
+            } catch {
+                await MainActor.run { self.logoURL = nil }
+            }
+        }
+    }
+
 
     var body: some View {
         ZStack {
@@ -68,14 +81,46 @@ struct TradeView: View {
                             .font(.system(size: 40, weight: .bold, design: .monospaced))
                             .foregroundColor(.primary)
                     } else {
-                        Picker("", selection: $selectedSymbolInPicker) {
-                            ForEach(watchlistStocks, id: \.code) { item in
-                                Text(item.code).tag(item.code)
+                        HStack(spacing: 10) {
+
+                            // 🔹 Company logo
+                            Group {
+                                if let url = logoURL {
+                                    AsyncImage(url: url) { phase in
+                                        switch phase {
+                                        case .success(let image):
+                                            image
+                                                .resizable()
+                                                .scaledToFit()
+                                        case .failure(_):
+                                            Image(systemName: "building.2")
+                                                .resizable()
+                                                .scaledToFit()
+                                                .foregroundColor(.secondary)
+                                        default:
+                                            ProgressView()
+                                        }
+                                    }
+                                } else {
+                                    Image(systemName: "building.2")
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundColor(.secondary)
+                                }
                             }
+                            .frame(width: 40, height: 40)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+
+                            // 🔹 Picker
+                            Picker("", selection: $selectedSymbolInPicker) {
+                                ForEach(watchlistStocks, id: \.code) { item in
+                                    Text(item.code).tag(item.code)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .font(.system(size: 40, weight: .bold, design: .monospaced))
+                            .foregroundColor(.primary)
                         }
-                        .pickerStyle(.menu)
-                        .font(.system(size: 40, weight: .bold, design: .monospaced))
-                        .foregroundColor(.primary)
                     }
                 }
                 
@@ -230,6 +275,7 @@ struct TradeView: View {
                 stockManager.selectedStockCode = first.code
                 stockManager.selectedStockPrice = first.current
             }
+            loadLogo(for: selectedSymbolInPicker.isEmpty ? activeSymbol : selectedSymbolInPicker)
         }
         .onTapGesture {
             sharesFieldFocused = false
@@ -252,7 +298,11 @@ struct TradeView: View {
                 stockManager.selectedStockCode = newSymbol
                 stockManager.selectedStockPrice = stockPrice
             }
+
+            // 🔹 load logo
+            loadLogo(for: newSymbol)
         }
+
 
         .alert("Insufficient Funds", isPresented: $showInsufficientFundsAlert) {
             Button("OK", role: .cancel) {}

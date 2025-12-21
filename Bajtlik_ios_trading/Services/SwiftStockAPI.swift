@@ -81,6 +81,20 @@ final class SwiftStockAPI {
 
         return profile.name ?? symbol
     }
+    func fetchCompanyProfile(for symbol: String) async throws -> CompanyProfile {
+        let urlString = "\(baseURL)/stock/profile2?symbol=\(symbol)&token=\(apiKey)"
+        guard let url = URL(string: urlString) else { throw URLError(.badURL) }
+
+        let (data, _) = try await URLSession.shared.data(from: url)
+        return try JSONDecoder().decode(CompanyProfile.self, from: data)
+    }
+
+    func fetchCompanyLogoURL(for symbol: String) async throws -> URL? {
+        let profile = try await fetchCompanyProfile(for: symbol)
+        guard let logoString = profile.logo, !logoString.isEmpty else { return nil }
+        return URL(string: logoString)
+    }
+
 }
 
 private struct SearchResponse: Codable {
