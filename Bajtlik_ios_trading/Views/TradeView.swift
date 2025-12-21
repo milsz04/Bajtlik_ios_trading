@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AudioToolbox
 
 struct TradeView: View {
     @EnvironmentObject var stockManager: StockManager
@@ -23,6 +24,10 @@ struct TradeView: View {
     @State private var showLimitFailedAlert = false
     @FocusState private var sharesFieldFocused: Bool
     @State private var logoURL: URL? = nil
+    @State private var showSellPLAlert = false
+    @State private var lastSellPL: Double = 0
+    @State private var lastSellSymbol: String = ""
+
 
 
     var estimatedCost: Double {
@@ -60,6 +65,19 @@ struct TradeView: View {
             }
         }
     }
+    private func avgCostForSymbol(_ symbol: String) -> Double? {
+        do {
+            let pos = try context.fetch(
+                FetchDescriptor<StockItem>(
+                    predicate: #Predicate<StockItem> { item in item.code == symbol }
+                )
+            ).first
+            return pos?.avgCost
+        } catch {
+            return nil
+        }
+    }
+
 
 
     var body: some View {
@@ -220,14 +238,26 @@ struct TradeView: View {
                             }
                         }
                     } else { // Sell
+                        let avgCost = avgCostForSymbol(symbol) ?? 0
+                        let realizedPL = (stockPrice - avgCost) * shares
+
                         let success = stockManager.sellStock(
                             symbol: symbol,
                             in: context,
                             shares: shares,
                             executionPrice: stockPrice
                         )
+
                         if success {
-                            showSuccessAlert = true
+                            lastSellPL = realizedPL
+                            lastSellSymbol = symbol
+                            showSellPLAlert = true
+
+                            if realizedPL > 0 {
+                                       AudioServicesPlaySystemSound(1025) // profit
+                                   } else {
+                                       AudioServicesPlaySystemSound(1006) // loss
+                                   }
                         } else {
                             showInsufficientSharesAlert = true
                         }
@@ -359,6 +389,15 @@ struct TradeView: View {
                  ? "Not enough available cash to place this limit buy."
                  : "Not enough available shares to place this limit sell.")
         }
+        .alert("Trade Result", isPresented: $showSellPLAlert) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            let pl = lastSellPL
+            Text(pl >= 0
+                 ? "You sold \(lastSellSymbol) with a profit of $\(String(format: "%.2f", pl))."
+                 : "You sold \(lastSellSymbol) with a loss of $\(String(format: "%.2f", abs(pl))).")
+        }
+
     }
 }
 
