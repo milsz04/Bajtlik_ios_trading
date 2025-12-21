@@ -91,26 +91,23 @@ struct WatchlistView: View {
                                 stockManager.selectedName = item.name
                                 stockManager.selectedStockPrice = item.current
                             }
-
-                            .padding(.vertical, 8)
-                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                                Button(role: .destructive) {
-                                    stockManager.removeWatchlistStock(item, in: context)
-                                } label: {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.white)            // kolor koła
-                                            .frame(width: 32, height: 32)
-                                        
-                                        Image(systemName: "trash")
-                                            .font(.system(size: 16, weight: .semibold))
-                                    }
-                                }
-                                
-                            }
-                            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                        
+                            .listRowInsets(
+                                EdgeInsets(top: 8, leading: 20, bottom: 8, trailing: 20)
+                            )
                             .listRowSeparator(.hidden)
                             .listRowBackground(Color.clear)
+
+                            .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                                Button {
+                                    stockManager.removeWatchlistStock(item, in: context)
+                                } label: {
+                                    Image(uiImage: UIImage(systemName: "trash")!
+                                    .withTintColor(.red, renderingMode: .alwaysOriginal))
+                                    .font(.system(size: 14, weight: .semibold))
+                                }
+                                .tint(.clear)
+                            }
                     }
                 }
                 .listStyle(.plain)
@@ -120,7 +117,6 @@ struct WatchlistView: View {
                         .environmentObject(stockManager)
                         .onAppear {
                             Task { await stockManager.refreshWatchlistStocks(stocks: stocks, in: context) }
-                            // select fallback info for DetailedStockView
                             stockManager.selectedStock = nil
                             stockManager.selectedSymbol = item.code
                             stockManager.selectedName = item.name
