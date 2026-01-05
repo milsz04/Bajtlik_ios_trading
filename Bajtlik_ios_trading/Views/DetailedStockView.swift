@@ -138,8 +138,7 @@ struct DetailedStockView: View {
 
                     VStack(spacing: 12) {
                         if viewModel.isLoadingChart {
-                            ProgressView("Loading chart...")
-                                .padding()
+                            ChartSkeleton()
                         } else if let chartError = viewModel.chartError {
                             Text(chartError)
                                 .font(.footnote)
@@ -275,6 +274,62 @@ struct DetailedStockView: View {
                 }
             }
         }
+    }
+}
+private struct ShimmerView: View {
+    @State private var phase: CGFloat = -0.3
+
+    var body: some View {
+        GeometryReader { geo in
+            let w = geo.size.width
+
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.primary.opacity(0.08))
+                .overlay(
+                    LinearGradient(
+                        gradient: Gradient(colors: [
+                            .clear,
+                            Color.white.opacity(0.35),
+                            .clear
+                        ]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .rotationEffect(.degrees(25))
+                    .offset(x: phase * w)
+                    .blendMode(.plusLighter)
+                )
+                .onAppear {
+                    phase = -0.3
+                    withAnimation(
+                        .linear(duration: 2.0)
+                        .repeatForever(autoreverses: false)
+                    ) {
+                        phase = 2.0
+                    }
+                }
+        }
+    }
+}
+
+private struct ChartSkeleton: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            ShimmerView()
+                .frame(height: 220)
+            HStack(spacing: 10) {
+                ForEach(0..<5, id: \.self) { _ in
+                    ShimmerView()
+                        .frame(height: 28)
+                }
+            }
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.systemGray5))
+        )
+        .padding(.horizontal)
     }
 }
 
