@@ -72,6 +72,7 @@ struct TradeView: View {
                     Text("Buy").tag("Buy")
                 }
                 .pickerStyle(.segmented)
+                .accessibilityIdentifier("tradeTypePicker")
                 .scaleEffect(2)
                 .frame(height: 40)
                 .padding(.horizontal, 100)
@@ -108,6 +109,7 @@ struct TradeView: View {
                         .frame(width: 100)
                         .textFieldStyle(.roundedBorder)
                         .focused($sharesFieldFocused)
+                        .accessibilityIdentifier("tradeSharesInput")
                         .toolbar {
                             ToolbarItemGroup(placement: .keyboard) {
                                 Spacer()
@@ -144,6 +146,7 @@ struct TradeView: View {
                         .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 3)
                         .foregroundColor(.primary)
                 }
+                .accessibilityIdentifier("executeTradeButton")
                 .buttonStyle(.glass)
                 .disabled(!viewModel.isSharesValid || viewModel.activeSymbol(stockManager: stockManager).isEmpty)
             }
@@ -185,6 +188,7 @@ struct TradeView: View {
             Button("Place Limit Order") {
                 viewModel.placeLimitOrderConfirmed(stockManager: stockManager, context: context)
             }
+            .accessibilityIdentifier("executeTradeButton")
 
             Button("Cancel", role: .cancel) { }
         } message: {

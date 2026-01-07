@@ -1,0 +1,593 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		CEA513E12EACEEF900452C37 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEA513C92EACEEF900452C37 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEA513D02EACEEF900452C37;
+			remoteInfo = Bajtlik_ios_trading;
+		};
+		CECE29D92F0EA9AB000C6D70 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CEA513C92EACEEF900452C37 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CEA513D02EACEEF900452C37;
+			remoteInfo = Bajtlik_ios_trading;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		CEA513D12EACEEF900452C37 /* Bajtlik_ios_trading.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bajtlik_ios_trading.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CEA513E02EACEEF900452C37 /* Bajtlik_ios_tradingTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Bajtlik_ios_tradingTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		CECE29D32F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Bajtlik_ios_tradingUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		CEA513D32EACEEF900452C37 /* Bajtlik_ios_trading */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Bajtlik_ios_trading;
+			sourceTree = "<group>";
+		};
+		CEA513E32EACEEF900452C37 /* Bajtlik_ios_tradingTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Bajtlik_ios_tradingTests;
+			sourceTree = "<group>";
+		};
+		CECE29D42F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Bajtlik_ios_tradingUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CEA513CE2EACEEF900452C37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA513DD2EACEEF900452C37 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CECE29D02F0EA9AB000C6D70 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CEA513C82EACEEF900452C37 = {
+			isa = PBXGroup;
+			children = (
+				CEA513D32EACEEF900452C37 /* Bajtlik_ios_trading */,
+				CEA513E32EACEEF900452C37 /* Bajtlik_ios_tradingTests */,
+				CECE29D42F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests */,
+				CEA513D22EACEEF900452C37 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CEA513D22EACEEF900452C37 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CEA513D12EACEEF900452C37 /* Bajtlik_ios_trading.app */,
+				CEA513E02EACEEF900452C37 /* Bajtlik_ios_tradingTests.xctest */,
+				CECE29D32F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		CEA513D02EACEEF900452C37 /* Bajtlik_ios_trading */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEA513F42EACEEF900452C37 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_trading" */;
+			buildPhases = (
+				CEA513CD2EACEEF900452C37 /* Sources */,
+				CEA513CE2EACEEF900452C37 /* Frameworks */,
+				CEA513CF2EACEEF900452C37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				CEA513D32EACEEF900452C37 /* Bajtlik_ios_trading */,
+			);
+			name = Bajtlik_ios_trading;
+			packageProductDependencies = (
+			);
+			productName = Bajtlik_ios_trading;
+			productReference = CEA513D12EACEEF900452C37 /* Bajtlik_ios_trading.app */;
+			productType = "com.apple.product-type.application";
+		};
+		CEA513DF2EACEEF900452C37 /* Bajtlik_ios_tradingTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CEA513F72EACEEF900452C37 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_tradingTests" */;
+			buildPhases = (
+				CEA513DC2EACEEF900452C37 /* Sources */,
+				CEA513DD2EACEEF900452C37 /* Frameworks */,
+				CEA513DE2EACEEF900452C37 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CEA513E22EACEEF900452C37 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CEA513E32EACEEF900452C37 /* Bajtlik_ios_tradingTests */,
+			);
+			name = Bajtlik_ios_tradingTests;
+			packageProductDependencies = (
+			);
+			productName = Bajtlik_ios_tradingTests;
+			productReference = CEA513E02EACEEF900452C37 /* Bajtlik_ios_tradingTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CECE29D22F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CECE29DB2F0EA9AB000C6D70 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_tradingUITests" */;
+			buildPhases = (
+				CECE29CF2F0EA9AB000C6D70 /* Sources */,
+				CECE29D02F0EA9AB000C6D70 /* Frameworks */,
+				CECE29D12F0EA9AB000C6D70 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CECE29DA2F0EA9AB000C6D70 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				CECE29D42F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests */,
+			);
+			name = Bajtlik_ios_tradingUITests;
+			packageProductDependencies = (
+			);
+			productName = Bajtlik_ios_tradingUITests;
+			productReference = CECE29D32F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CEA513C92EACEEF900452C37 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					CEA513D02EACEEF900452C37 = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					CEA513DF2EACEEF900452C37 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = CEA513D02EACEEF900452C37;
+					};
+					CECE29D22F0EA9AB000C6D70 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = CEA513D02EACEEF900452C37;
+					};
+				};
+			};
+			buildConfigurationList = CEA513CC2EACEEF900452C37 /* Build configuration list for PBXProject "Bajtlik_ios_trading" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = CEA513C82EACEEF900452C37;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CE101A7C2EBF75FA00569D16 /* XCRemoteSwiftPackageReference "swift-alpha-vantage" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = CEA513D22EACEEF900452C37 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CEA513D02EACEEF900452C37 /* Bajtlik_ios_trading */,
+				CEA513DF2EACEEF900452C37 /* Bajtlik_ios_tradingTests */,
+				CECE29D22F0EA9AB000C6D70 /* Bajtlik_ios_tradingUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CEA513CF2EACEEF900452C37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA513DE2EACEEF900452C37 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CECE29D12F0EA9AB000C6D70 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CEA513CD2EACEEF900452C37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CEA513DC2EACEEF900452C37 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CECE29CF2F0EA9AB000C6D70 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CEA513E22EACEEF900452C37 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEA513D02EACEEF900452C37 /* Bajtlik_ios_trading */;
+			targetProxy = CEA513E12EACEEF900452C37 /* PBXContainerItemProxy */;
+		};
+		CECE29DA2F0EA9AB000C6D70 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CEA513D02EACEEF900452C37 /* Bajtlik_ios_trading */;
+			targetProxy = CECE29D92F0EA9AB000C6D70 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CEA513F22EACEEF900452C37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		CEA513F32EACEEF900452C37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CEA513F52EACEEF900452C37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A63SCAY8DX;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-trading";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		CEA513F62EACEEF900452C37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A63SCAY8DX;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-trading";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		CEA513F82EACEEF900452C37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A63SCAY8DX;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-tradingTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bajtlik_ios_trading.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bajtlik_ios_trading";
+			};
+			name = Debug;
+		};
+		CEA513F92EACEEF900452C37 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = A63SCAY8DX;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-tradingTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bajtlik_ios_trading.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bajtlik_ios_trading";
+			};
+			name = Release;
+		};
+		CECE29DC2F0EA9AB000C6D70 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-trading.Bajtlik-ios-tradingUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Bajtlik_ios_trading;
+			};
+			name = Debug;
+		};
+		CECE29DD2F0EA9AB000C6D70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "Bajtlik.Bajtlik-ios-trading.Bajtlik-ios-tradingUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Bajtlik_ios_trading;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CEA513CC2EACEEF900452C37 /* Build configuration list for PBXProject "Bajtlik_ios_trading" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEA513F22EACEEF900452C37 /* Debug */,
+				CEA513F32EACEEF900452C37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEA513F42EACEEF900452C37 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_trading" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEA513F52EACEEF900452C37 /* Debug */,
+				CEA513F62EACEEF900452C37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CEA513F72EACEEF900452C37 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_tradingTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CEA513F82EACEEF900452C37 /* Debug */,
+				CEA513F92EACEEF900452C37 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CECE29DB2F0EA9AB000C6D70 /* Build configuration list for PBXNativeTarget "Bajtlik_ios_tradingUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CECE29DC2F0EA9AB000C6D70 /* Debug */,
+				CECE29DD2F0EA9AB000C6D70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		CE101A7C2EBF75FA00569D16 /* XCRemoteSwiftPackageReference "swift-alpha-vantage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/iamWing/swift-alpha-vantage";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+	};
+	rootObject = CEA513C92EACEEF900452C37 /* Project object */;
+}

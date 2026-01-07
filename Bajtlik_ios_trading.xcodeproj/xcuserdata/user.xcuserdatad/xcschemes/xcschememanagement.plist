@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SchemeUserState</key>
+	<dict>
+		<key>Bajtlik_ios_trading.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>CEA513D02EACEEF900452C37</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CEA513DF2EACEEF900452C37</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CEA513E92EACEEF900452C37</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>CEB0718B2F0E9F7C0059B44C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+	</dict>
+</dict>
+</plist>

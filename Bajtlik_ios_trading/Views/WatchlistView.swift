@@ -45,6 +45,7 @@ struct WatchlistView: View {
                             .foregroundColor(Color.primary)
                             .padding(.horizontal, 10)
                     }
+                    .accessibilityIdentifier("watchlistSearchButton")
                     .alert("Add Stock Symbol", isPresented: $viewModel.showSearchField) {
                         TextField("Enter symbol (e.g. AAPL)", text: $viewModel.stockSymbol)
                             .textInputAutocapitalization(.never)
@@ -76,6 +77,7 @@ struct WatchlistView: View {
                 List {
                     ForEach(viewModel.filteredStocks(from: stocks)) { item in
                         StockCardWatchlist(item: item)
+                            .accessibilityIdentifier("stockRow_\(item.code)")
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 viewModel.openDetails(for: item, stockManager: stockManager)

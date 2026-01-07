@@ -1,33 +1,24 @@
-//
-//  test1UITestsLaunchTests.swift
-//  test1UITests
-//
-//  Created by User on 18/10/2025.
-//
-
 import XCTest
 
-final class test1UITestsLaunchTests: XCTestCase {
+final class BajtlikLaunchTests: XCTestCase {
 
-    override class var runsForEachTargetApplicationUIConfiguration: Bool {
-        true
-    }
-
-    override func setUpWithError() throws {
-        continueAfterFailure = false
-    }
-
-    @MainActor
-    func testLaunch() throws {
+    func testAppLaunchAndTransition() throws {
         let app = XCUIApplication()
+        
+        // 1. Launch the application
         app.launch()
 
-        // Insert steps here to perform after app launch but before taking a screenshot,
-        // such as logging into a test account or navigating somewhere in the app
+        // 2. Verify we see the Splash Screen content first
+        // Your HomeView shows a "Welcome!" text
+        let welcomeText = app.staticTexts["Welcome!"]
+        XCTAssertTrue(welcomeText.exists, "The splash screen Welcome message should be visible on launch.")
 
-        let attachment = XCTAttachment(screenshot: app.screenshot())
-        attachment.name = "Launch Screen"
-        attachment.lifetime = .keepAlways
-        add(attachment)
+        // 3. Wait for the app to transition to the main Watchlist screen
+        // We use a 5-second timeout because your code has a 1.5s + 1.0s delay logic
+        let watchlistHeader = app.staticTexts["Watchlist"]
+        let exists = watchlistHeader.waitForExistence(timeout: 5)
+
+        // 4. Final Assertion
+        XCTAssertTrue(exists, "The app failed to transition from the splash screen to the Watchlist view.")
     }
 }
