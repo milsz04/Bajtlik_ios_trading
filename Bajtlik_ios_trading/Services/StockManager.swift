@@ -76,19 +76,36 @@ final class StockManager: ObservableObject {
         static let balance = "bajtlik.balance"
         static let reservedCash = "bajtlik.reservedCash"
     }
+    private static func sanitizeMoney(_ value: Double) -> Double {
+        guard value.isFinite else { return 0 }
+        return max(0, value)
+    }
 
     @Published var balance: Double {
-        didSet { UserDefaults.standard.set(balance, forKey: PersistKeys.balance) }
+        didSet {
+            let clean = Self.sanitizeMoney(balance)
+            if balance != clean { balance = clean; return }   // prevents NaN/negative persistence
+            UserDefaults.standard.set(balance, forKey: PersistKeys.balance)
+        }
     }
 
     @Published var reservedCash: Double {
-        didSet { UserDefaults.standard.set(reservedCash, forKey: PersistKeys.reservedCash) }
+        didSet {
+            let clean = Self.sanitizeMoney(reservedCash)
+            if reservedCash != clean { reservedCash = clean; return }
+            UserDefaults.standard.set(reservedCash, forKey: PersistKeys.reservedCash)
+        }
     }
+
+
 
 
     var availableCash: Double {
-        max(0, balance - reservedCash)
+        let b = Self.sanitizeMoney(balance)
+        let r = Self.sanitizeMoney(reservedCash)
+        return max(0, b - r)
     }
+
 
     @Published var selectedStockCode: String? = nil
     @Published var selectedStockPrice: Double? = nil
@@ -101,10 +118,12 @@ final class StockManager: ObservableObject {
         let savedBalance = defaults.object(forKey: PersistKeys.balance) as? Double
         let savedReserved = defaults.object(forKey: PersistKeys.reservedCash) as? Double
 
-        self.balance = savedBalance ?? 10000.00
-        self.reservedCash = savedReserved ?? 0.0
+        self.balance = Self.sanitizeMoney(savedBalance ?? 10_000.00)
+        self.reservedCash = Self.sanitizeMoney(savedReserved ?? 0.0)
     }
 
+
+    
 
     // MARK: - Watchlist
 
@@ -222,16 +241,21 @@ final class StockManager: ObservableObject {
     // MARK: - Market BUY / SELL
 
     func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
+        guard shares >= 0.01, pricePerShare > 0 else { return false }
         let totalCost = shares * pricePerShare
         guard totalCost <= balance else { return false }
         balance -= totalCost
         return true
     }
 
+
+
     func buyStock(symbol: String, in context: ModelContext, shares: Double, executionPrice: Double) async -> Bool {
-        guard shares >= 0.01 else { return false }
+        guard shares >= 0.01, executionPrice > 0 else { return false }
+
         let totalCost = shares * executionPrice
         guard totalCost <= balance else { return false }
+
 
         do {
             let existing = try context.fetch(
@@ -327,8 +351,8 @@ final class StockManager: ObservableObject {
         limitPrice: Double,
         in context: ModelContext
     ) -> Bool {
-        guard shares >= 0.01 else { return false }
-        guard limitPrice > 0 else { return false }
+        guard shares >= 0.01, limitPrice > 0 else { return false }
+
         guard side == "Buy" || side == "Sell" else { return false }
 
         if side == "Buy" {
