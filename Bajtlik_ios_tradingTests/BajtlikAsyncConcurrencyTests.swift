@@ -53,17 +53,15 @@ final class BajtlikAsyncConcurrencyTests: XCTestCase {
         super.tearDown()
     }
 
-    // MARK: - StockFetcher async behavior (success)
 
     func testStockFetcher_fetchStockQuote_success_setsQuoteAndClearsError() async {
-        // Arrange
+
         let expectedJSON = """
         { "c": 123.45, "d": 1.2, "dp": 0.98, "h": 130.0, "l": 120.0, "o": 122.0, "pc": 122.25 }
         """.data(using: .utf8)!
 
         URLProtocolStub.handler = { request in
             guard let url = request.url else { throw URLError(.badURL) }
-            // This call comes from SwiftStockAPI.fetchQuote(for:) :contentReference[oaicite:3]{index=3}
             if url.host == "finnhub.io", url.path.contains("/quote") {
                 let resp = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
                 return (resp, expectedJSON)
@@ -95,7 +93,6 @@ final class BajtlikAsyncConcurrencyTests: XCTestCase {
         XCTAssertEqual(quote.open, 122.0, accuracy: 0.0001)
     }
 
-    // MARK: - StockFetcher async behavior (failure)
 
     func testStockFetcher_fetchStockQuote_failure_setsErrorAndStopsLoading() async {
         URLProtocolStub.handler = { request in
@@ -123,7 +120,6 @@ final class BajtlikAsyncConcurrencyTests: XCTestCase {
         XCTAssertNil(fetcher.stockQuote)
     }
 
-    // MARK: - SwiftStockAPI concurrency: many concurrent fetchQuote calls
 
     func testSwiftStockAPI_concurrentFetchQuote_allReturn() async throws {
         URLProtocolStub.handler = { request in
@@ -162,7 +158,6 @@ final class BajtlikAsyncConcurrencyTests: XCTestCase {
         XCTAssertEqual(c.current, 30, accuracy: 0.0001)
     }
 
-    // MARK: - ChartStockAPI async: parsing + ordering
 
     func testChartStockAPI_fetchTimeSeries_parsesAndReturnsPoints() async throws {
         let json = """

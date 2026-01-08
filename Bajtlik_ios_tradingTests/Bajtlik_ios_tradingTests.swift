@@ -38,7 +38,6 @@ struct  StockLineChartViewModelTests  {
         let t1 = t0.addingTimeInterval(60)
         let t2 = t0.addingTimeInterval(120)
 
-        // celowo wrzucamy w złej kolejności
         let data = [
             PricePoint(time: t2, price: 3),
             PricePoint(time: t0, price: 1),
@@ -69,7 +68,7 @@ struct  StockLineChartViewModelTests  {
         let sm = StockManager()
         sm.balance = 100
 
-        let ok = sm.tryBuy(shares: 2, pricePerShare: 100) // koszt 200
+        let ok = sm.tryBuy(shares: 2, pricePerShare: 100) 
 
         #expect(ok == false)
         #expect(sm.balance == 100)

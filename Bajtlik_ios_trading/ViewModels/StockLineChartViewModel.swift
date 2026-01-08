@@ -136,7 +136,6 @@ final class StockLineChartViewModel: ObservableObject {
     }
 
     var xLabelCount: Int {
-        // jak w starym kodzie – zawsze 5
         5
     }
 

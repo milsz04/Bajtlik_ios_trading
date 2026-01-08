@@ -49,7 +49,6 @@ struct BajtlikView: View {
 
                     VStack(spacing: 16) {
 
-                        // OWNED STOCKS
                         ForEach(stocks) { item in
                             NavigationLink(
                                 destination: DetailedStockView()

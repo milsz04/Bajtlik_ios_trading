@@ -5,7 +5,6 @@ struct DetailedStockView: View {
     @State private var selectedTimeRange: TimeRange = .oneDay
     @StateObject private var viewModel = DetailedStockViewModel()
 
-    // MARK: - Time Range
     enum TimeRange: String, CaseIterable {
         case oneDay      = "1D"
         case sevenDays   = "7D"
@@ -14,7 +13,6 @@ struct DetailedStockView: View {
         case oneYear     = "1Y"
     }
 
-    // MARK: - Watchlist fallback quote snapshot
     @State private var fallbackQuote: QuoteSnapshot?
     @State private var isLoadingQuote = false
 
@@ -213,9 +211,7 @@ struct DetailedStockView: View {
         }
     }
 
-    // MARK: - Fallback quote loader (watchlist path)
     private func loadFallbackQuoteIfNeeded() {
-        // If portfolio selectedStock exists, we already have full quote fields.
         guard stockManager.selectedStock == nil else { return }
         guard !symbol.isEmpty else { return }
         guard !isLoadingQuote else { return }
@@ -244,7 +240,6 @@ struct DetailedStockView: View {
         }
     }
 
-    // MARK: - Chart loader
     private func loadChartData(symbol: String) {
         let interval = selectedTimeRange.interval
         let size = selectedTimeRange.outputSize
