@@ -84,7 +84,7 @@ final class StockManager: ObservableObject {
     @Published var balance: Double {
         didSet {
             let clean = Self.sanitizeMoney(balance)
-            if balance != clean { balance = clean; return }   // prevents NaN/negative persistence
+            if balance != clean { balance = clean; return }
             UserDefaults.standard.set(balance, forKey: PersistKeys.balance)
         }
     }
@@ -124,8 +124,6 @@ final class StockManager: ObservableObject {
 
 
     
-
-    // MARK: - Watchlist
 
     func addWatchlistStock(query: String, in context: ModelContext) async {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -192,7 +190,6 @@ final class StockManager: ObservableObject {
         catch { print("Failed to remove watchlist stock:", error) }
     }
 
-    // MARK: - Selection helpers
 
     func select(stock: StockItem) {
         selectedStock = stock
@@ -210,7 +207,6 @@ final class StockManager: ObservableObject {
         selectedStockPrice = watchlist.current
     }
 
-    // MARK: - Portfolio refresh
 
     func refreshAllStocks(stocks: [StockItem], in context: ModelContext) async {
         for stock in stocks {
@@ -238,7 +234,6 @@ final class StockManager: ObservableObject {
         await processLimitOrders(in: context)
     }
 
-    // MARK: - Market BUY / SELL
 
     func tryBuy(shares: Double, pricePerShare: Double) -> Bool {
         guard shares >= 0.01, pricePerShare > 0 else { return false }
@@ -341,7 +336,6 @@ final class StockManager: ObservableObject {
         }
     }
 
-    // MARK: - Limit Orders
 
     func placeLimitOrder(
         symbol: String,

@@ -119,8 +119,6 @@ final class StockLineChartViewModel: ObservableObject {
         return result
     }
 
-    // MARK: - Właściwości używane przez View
-
     var xDomainDate: ClosedRange<Date> {
         guard let first = visibleData.first?.time,
               let last  = visibleData.last?.time else {
