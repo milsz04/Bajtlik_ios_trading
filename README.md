@@ -1,97 +1,93 @@
-# Genetic Algorithm for Point Grouping (C++)
+# Bajtlik – Paper-Trading App for iOS
 
-A genetic algorithm that splits a set of points in multi-dimensional space into groups so that points in the same group are as close to each other as possible. Written in C++17 with an object-oriented design and no external dependencies.
+Bajtlik is a SwiftUI app for learning to trade stocks without risking real money. You start with **$10,000 in virtual cash**, follow real companies with live market data, and place market or limit orders while the app tracks your portfolio and profit or loss.
 
-In a sample run on 10 points in 10 dimensions, the algorithm went from a best random solution with a cost of **319.7** to **5.7** after 1,000 generations.
+*"Bajtlik" means "wallet" in the Silesian dialect.*
 
-## The problem
+## Features
 
-Given **N points** and **K groups**, assign every point to one group. The cost of a solution is the sum of distances between every pair of points that share a group:
+**Watchlist**
+- Add any listed company by its ticker symbol; the app finds the best match and fetches its name and live quote.
+- Pull to refresh prices, search saved stocks, and swipe to remove one.
 
-```
-cost = Σ over groups  Σ over pairs (i, j) in that group  2 · ‖pᵢ − pⱼ‖
-```
+**Stock details**
+- Interactive price chart built with Swift Charts, with 1D, 7D, 1M, 6M and 1Y ranges.
+- Current price, daily change, and the day's open, high and low.
 
-Lower is better. The search space grows as Kᴺ: the default 10 points and 9 groups already give about 3.5 billion assignments, so brute force quickly becomes impractical.
+**Trading**
+- Buy and sell with **market orders** (filled at the live price) or **limit orders** (filled automatically once the price reaches your limit).
+- Estimated cost and available cash are shown before you confirm, and orders are rejected if you lack the funds or shares.
+- Cash for pending buy orders and shares for pending sell orders are reserved, so you can't spend or sell the same thing twice.
 
-Test data comes from `CGaussianGroupingEvaluatorFactory`. It samples points from a mixture of multivariate Gaussian distributions, with each dimension's mean and standard deviation drawn from a range you set. A fixed seed makes the dataset reproducible.
+**Portfolio**
+- Total portfolio value, unrealised profit or loss, and available cash.
+- Pending limit orders, which you can cancel to release the reserved cash or shares.
+- Pull to refresh prices; any limit orders whose price has been reached are executed at the same time.
 
-## How the algorithm works
+**Settings**
+- Dark mode, a reset of the virtual balance to $10,000, and About and Credits screens.
+
+## Tech stack
+
+| Area | Technology |
+|---|---|
+| Language and UI | Swift 5, SwiftUI |
+| Persistence | SwiftData (positions, watchlist, limit orders); `UserDefaults` for the cash balance and settings |
+| Charts | Swift Charts |
+| Networking | `URLSession` with async/await |
+| Market data | [Finnhub](https://finnhub.io) for quotes, search and company profiles; [Twelve Data](https://twelvedata.com) for price history |
+| Testing | Swift Testing, XCTest and XCUITest |
+
+## Architecture
+
+The app follows **MVVM**. Views are kept free of business logic, view models prepare data for the screens, and a shared `StockManager` owns the account, the trading rules and the persistence.
 
 ```mermaid
 flowchart LR
-    A[Random population] --> B[Tournament selection]
-    B --> C[Single-point crossover]
-    C --> D[Per-gene mutation]
-    D --> E[Evaluate and track best]
-    E -->|next generation| B
+    V[SwiftUI Views] --> VM[View models]
+    VM --> SM[StockManager<br/>balance, orders, positions]
+    SM --> SD[(SwiftData)]
+    SM --> F[SwiftStockAPI<br/>Finnhub]
+    VM --> C[ChartStockAPI<br/>Twelve Data]
 ```
 
-| Step | Implementation |
-|---|---|
-| Encoding | A chromosome is a `std::vector<int>` of length N. Gene *i* is the group (1…K) of point *i*. |
-| Initialisation | Each gene gets a uniformly random group. |
-| Selection | Binary tournament: pick two random individuals and keep the one with lower cost. |
-| Crossover | Single-point crossover with probability `pc`. The cut point is random in [1, N−1] and the two parents swap their tails. |
-| Mutation | Each gene is reassigned to a random group with probability `pm`. |
-| Replacement | Generational: children replace the whole population. The best solution ever seen is stored separately, so it is never lost. |
+```
+Bajtlik_ios_trading/
+├── Models/        PricePoint and chart time ranges
+├── Services/      API clients, StockManager and the SwiftData models
+├── ViewModels/    One view model per screen, plus chart logic
+└── Views/         Watchlist, portfolio, trade, stock details, settings
+```
 
-The repository also includes `COptimizer`, a random-search baseline that samples a new random solution every iteration and keeps the best. It is useful as a point of comparison for the genetic algorithm.
+## Testing
 
-## Build and run
+The project has **20 unit tests** and **5 UI tests**.
 
-You need a C++17 compiler (GCC 8+, Clang 7+ or MSVC 2019+).
+- **Unit tests** cover the chart view model, portfolio maths edge cases (no negative shares, no NaN values, zero cost basis), and the API clients. Network calls are intercepted with a `URLProtocol` stub, so the tests run offline and check parsing, error handling and concurrent requests.
+- **UI tests** walk through launching the app, switching tabs, adding a stock and opening its details, placing a market buy, and resetting the balance.
+
+Run them in Xcode with **⌘U**, or from the terminal:
 
 ```bash
-g++ -std=c++17 -O2 -o ga *.cpp
-./ga | tail -n 3
+xcodebuild test -project BajtlikTrade.xcodeproj -scheme Bajtlik_ios_trading \
+  -destination 'platform=iOS Simulator,name=iPhone 17'
 ```
 
-The program prints every population at every generation, so piping through `tail` shows just the final result:
+## Getting started
 
-```
-Best Individual
-Genes: 3781526449
-Fitness: 5.67415
-```
+**Requirements:** Xcode 26 and an iOS 26 simulator or device.
 
-The genes line shows the group of each point in order. Results differ slightly between runs because the algorithm's random engine is seeded from `std::random_device`; the dataset itself is fixed with seed `0`.
+1. Clone the repository and open `BajtlikTrade.xcodeproj`.
+2. Get free API keys from [Finnhub](https://finnhub.io/register) and [Twelve Data](https://twelvedata.com/pricing).
+3. Put the keys in `Services/SwiftStockAPI.swift` (Finnhub) and `Services/ChartStockAPI.swift` (Twelve Data).
+4. Select the `Bajtlik_ios_trading` scheme and run with **⌘R**.
 
-## Configuration
+Free API plans have rate limits, so refreshing a long watchlist many times in a row may briefly return errors.
 
-All parameters are set in `main.cpp`:
+## Team
 
-| Parameter | Default | Meaning |
-|---|---|---|
-| `popSize` | 20 | Individuals per generation |
-| `numOfPoints` | 10 | Points to group |
-| `numberOfGroups` | 9 | Available groups |
-| Gaussian distributions | 4 | Clusters the points are sampled from |
-| Dimensions | 10 | Each with mean in [−100, 100] and standard deviation 1 |
-| `iterations` | 1000 | Generations to run |
-| `crossoverProbability` | 0.6 | Chance that two parents are recombined |
-| `mutationProbability` | 0.1 | Chance that each gene is mutated |
+Built by **Miłosz Szynka**, **Katarzyna Michalska** and **Jakub Piskorowski** (Team Bajtlik).
 
-## Project structure
+## Disclaimer
 
-| File | Responsibility |
-|---|---|
-| `main.cpp` | Builds the dataset, configures and runs the algorithm |
-| `CGeneticAlgorithm.h/.cpp` | Population, selection, crossover, the generation loop and best-solution tracking |
-| `CIndividual.h/.cpp` | One solution: its genes, its cached cost, crossover and mutation operators |
-| `GroupingEvaluator.h/.cpp` | Computes the cost of a solution and validates it |
-| `GaussianGroupingEvaluatorFactory.h/.cpp` | Generates reproducible test datasets from Gaussian mixtures |
-| `Point.h/.cpp` | An N-dimensional point and Euclidean distance |
-| `Optimizer.h/.cpp` | Random-search baseline |
-
-## Possible improvements
-
-- Keep the best individuals between generations (elitism) to speed up convergence.
-- Accept parameters and a seed from the command line, and add a quiet mode that prints only progress and the final result.
-- Add unit tests for crossover, mutation and the evaluator, for example with GoogleTest.
-- Add a CMake build and replace the raw `new`/`delete` in the factory with smart pointers.
-- Compare against the random-search baseline on larger instances and plot cost per generation.
-
-## Author
-
-Miłosz Szynka · [github.com/milsz04](https://github.com/milsz04)
+Bajtlik is an educational project. All money in the app is virtual, and nothing in it is investment advice.
