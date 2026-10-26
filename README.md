@@ -2,7 +2,7 @@
 
 Bajtlik is a SwiftUI app for learning to trade stocks without risking real money. You start with **$10,000 in virtual cash**, follow real companies with live market data, and place market or limit orders while the app tracks your portfolio and profit or loss.
 
-*"Bajtlik" means "wallet" in the Silesian dialect.*
+*"Bajtlik" means "wallet" in the Silesian language.*
 
 ## Features
 
